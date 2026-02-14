@@ -14,6 +14,7 @@ const navLinks = [
 ];
 
 const Navbar = () => {
+
     const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
@@ -48,7 +49,7 @@ const Navbar = () => {
                     <Link href="#demo" className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors  border border-gray-700 hover:bg-gray-800 hover:border-gray-500 glow-sm">
                         View Demo
                     </Link>
-                    <Link href="#cta" className="rounded-lg bg-orange-500 px-4 py-2 text-sm text-primary-foreground transition-all hover:opacity-90 glow-sm">
+                    <Link href="/auth" className="rounded-lg bg-orange-500 px-4 py-2 text-sm text-primary-foreground transition-all hover:opacity-90 glow-sm">
                         Get Started Free
                     </Link>
                 </div>
@@ -83,7 +84,7 @@ const Navbar = () => {
                             <Link href="#demo" className="rounded-lg px-4 py-3 text-sm text-center border border-gray-700 hover:bg-gray-800">
                                 View Demo
                             </Link>
-                            <Link href="#cta" className="rounded-lg bg-orange-500 px-4 py-3 text-sm text-center font-semibold text-primary-foreground transition-all hover:opacity-90 glow-sm">
+                            <Link href="/auth" className="rounded-lg bg-orange-500 px-4 py-3 text-sm text-center font-semibold text-primary-foreground transition-all hover:opacity-90 glow-sm">
                                 Get Started Free
                             </Link>
                         </div>

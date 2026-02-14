@@ -54,7 +54,7 @@ const HeroSection = () => {
                         className="flex flex-col sm:flex-row items-center gap-4"
                     >
                         <Link
-                            href="#cta"
+                            href="/auth"
                             className="group flex items-center gap-2 rounded-xl bg-orange-500 px-8 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90 glow-md"
                         >
                             Get Started Free

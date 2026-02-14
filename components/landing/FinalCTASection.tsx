@@ -3,6 +3,7 @@ import AnimatedSection from "./AnimatedSection";
 import { ArrowRight, Shield } from "lucide-react";
 
 const FinalCTASection = () => {
+
     return (
         <section id="cta" className="section-padding relative overflow-hidden">
             {/* Glow */}
@@ -30,7 +31,7 @@ const FinalCTASection = () => {
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Link href="#" className="group flex items-center gap-2 rounded-xl bg-orange-500 px-8 py-4 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90 glow-md">
+                            <Link href="/auth" className="group flex items-center gap-2 rounded-xl bg-orange-500 px-8 py-4 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90 glow-md">
                                 Get Started Free
                                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                             </Link>
@@ -44,6 +45,7 @@ const FinalCTASection = () => {
             </div>
         </section>
     );
+
 };
 
 export default FinalCTASection;
