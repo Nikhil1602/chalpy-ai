@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 
@@ -25,27 +25,43 @@ export const authOptions: NextAuthOptions = {
         Credentials({
             name: "credentials",
             credentials: {
-                email: {},
-                password: {},
+                email: { label: "Email", type: "email" },
+                password: { label: "Password", type: "password" },
             },
 
             async authorize(credentials) {
-                if (!credentials?.email || !credentials.password) return null
+
+                if (!credentials?.email || !credentials.password) {
+                    throw new Error("MISSING_CREDENTIALS");
+                }
 
                 const user = await prisma.user.findUnique({
-                    where: { email: credentials.email as string },
-                })
+                    where: { email: credentials.email },
+                });
 
-                if (!user || !user.password) return null
+                if (!user || !user.password) {
+                    throw new Error("USER_NOT_FOUND");
+                }
+
+                if (!user.emailVerified) {
+                    throw new Error("EMAIL_NOT_VERIFIED");
+                }
 
                 const isValid = await bcrypt.compare(
-                    credentials.password as string,
+                    credentials.password,
                     user.password
                 )
 
-                if (!isValid) return null
+                if (!isValid) {
+                    throw new Error("INVALID_PASSWORD");
+                }
 
-                return user
+                return {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    image: user.image,
+                }
             },
 
         }),

@@ -21,8 +21,17 @@ model User {
   image         String?
   password      String? // for credentials login
 
+  verificationToken      String?
+  verificationTokenExpiry DateTime?
+
+  resetToken             String?
+  resetTokenExpiry       DateTime?
+
   accounts Account[]
   sessions Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Account {

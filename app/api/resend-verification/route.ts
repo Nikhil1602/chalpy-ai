@@ -1,36 +1,33 @@
 import { htmlTemplate } from "@/lib/constants";
 import { resend } from "@/lib/mail";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
 
-    const { name, email, password } = await req.json();
+    const { email } = await req.json();
+
+    if (!email) {
+        return NextResponse.json({ ok: false, error: "MISSING_EMAIL" }, { status: 400 });
+    }
 
     const user = await prisma.user.findUnique({
-        where: { email: email },
+        where: { email },
     });
 
-    if (user) {
-        return NextResponse.json({ ok: false, error: "USER_EXISTS" }, { status: 400 });
+    // Always return same response (security best practice)
+    if (!user || user.emailVerified) {
+        return NextResponse.json({ ok: true, message: "If an account with that email exists and is not verified, a new verification email has been sent." }, { status: 200 });
     }
 
-    if (!name || !email || !password) {
-        return NextResponse.json({ ok: false, error: "MISSING_FIELDS" }, { status: 400 });
-    }
-
-    const hashed = await bcrypt.hash(password, 10);
-
+    // Generate new token
     const token = crypto.randomBytes(32).toString("hex");
     const expiry = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
 
-    await prisma.user.create({
+    await prisma.user.update({
+        where: { email },
         data: {
-            name,
-            email,
-            password: hashed,
             verificationToken: token,
             verificationTokenExpiry: expiry,
         },
@@ -40,9 +37,9 @@ export async function POST(req: Request) {
 
     const templateDetails = {
         title: "Verify Your Account",
-        name: name,
         description: "Click the button below to verify your account. If you did not request this verification, you can safely ignore this email.",
         link: verifyUrl,
+        name: user.name as string,
         linkText: "Click to verify your account"
     }
 
@@ -57,6 +54,5 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: false, error }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true, message: "Account created successfully. Please check your email to verify your account.", data }, { status: 200 });
-
+    return NextResponse.json({ ok: true, message: "Verification email sent successfully", data }, { status: 200 });
 }
