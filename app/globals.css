@@ -1,16 +1,11 @@
-/* ======================================================
-   Tailwind v4 entry (NO config file)
-====================================================== */
 @import "tailwindcss";
 
-/* ======================================================
-   Design Tokens (OKLCH-based)
-====================================================== */
 @layer base {
+
   :root {
     /* Core surfaces */
-    --background: oklch(0.08 0.02 250);
-    --foreground: oklch(0.96 0.01 250);
+    --background: oklch(0% 0 0);
+    --foreground: oklch(100% 0.00011 271.152);
 
     --card: oklch(0.11 0.025 250);
     --card-foreground: oklch(0.96 0.01 250);
@@ -69,6 +64,7 @@
     --background: oklch(0.05 0.02 250);
     --card: oklch(0.09 0.025 250);
   }
+
 }
 
 /* ======================================================
@@ -136,6 +132,19 @@
       padding-inline: 2rem;
     }
   }
+
+  svg g,
+  .recharts-surface:focus,
+  .recharts-surface:focus-visible,
+  .recharts-surface:focus-within,
+  .recharts-surface.g,
+  .recharts-cartesian-grid,
+  .recharts-layer.recharts-cartesian-axis-tick-label,
+  .recharts-cartesian-axis-tick-labels.recharts-yAxis-tick-labels {
+    outline: none;
+    border: none;
+  }
+
 }
 
 /* ======================================================
@@ -174,7 +183,7 @@
 
   .dot-pattern {
     background-image: radial-gradient(circle,
-        color-mix(in oklch, var(--border) 50%, transparent) 1px,
+        color-mix(in oklch, white 50%, transparent) 1px,
         transparent 1px);
     background-size: 24px 24px;
   }
