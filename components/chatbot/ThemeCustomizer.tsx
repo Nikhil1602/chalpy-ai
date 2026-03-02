@@ -304,6 +304,7 @@ export function ThemeCustomizer({ theme, onChange, botName }: ThemeCustomizerPro
                                 </div>
                             </div>
 
+
                             <div className="space-y-2 w-full">
                                 <Label>Size: <span className="text-orange-600">{launcher.size}px</span></Label>
                                 <div className='h-8 flex'>
@@ -311,6 +312,13 @@ export function ThemeCustomizer({ theme, onChange, botName }: ThemeCustomizerPro
                                 </div>
                             </div>
 
+
+                        </div>
+                        <div className="space-y-2 w-full">
+                            <Label>Padding: <span className="text-orange-600">{launcher.padding ?? 12}px</span></Label>
+                            <div className='h-8 flex'>
+                                <Slider value={[launcher.padding ?? 12]} onValueChange={([v]) => onChange({ ...theme, launcher: { ...launcher, padding: v } })} min={4} max={18} step={2} />
+                            </div>
                         </div>
                     </CardContent>
                 </Card>

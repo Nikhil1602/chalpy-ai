@@ -11,7 +11,7 @@ import Link from 'next/link';
 
 const Chatbot = () => {
 
-    const { chatbots } = useWorkspace();
+    const { chatbots, deleteChatbot } = useWorkspace();
 
     return (
         <SidebarContainer>
@@ -39,7 +39,7 @@ const Chatbot = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {chatbots.map((chatbot, index) => (
-                        <ChatbotCard key={chatbot.id} chatbot={chatbot} index={index} />
+                        <ChatbotCard deleteChatbot={deleteChatbot} key={chatbot.id} chatbot={chatbot} index={index} />
                     ))}
                 </div>
             )}

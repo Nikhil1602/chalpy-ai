@@ -11,21 +11,16 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ icon: Icon, title, description, action, className }: EmptyStateProps) {
+
     return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className={cn(
-                'flex flex-col items-center justify-center py-16 px-4 text-center',
-                className
-            )}
-        >
-            <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
-                <Icon className="w-8 h-8 text-muted-foreground" />
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className={cn('flex flex-col items-center justify-center border rounded-2xl border-dashed py-16 px-4 text-center', className)}>
+            <div className="w-16 h-16 rounded-2xl bg-gray-900 flex items-center justify-center mb-4">
+                <Icon className="w-8 h-8 text-gray-500" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
-            <p className="text-muted-foreground max-w-sm mb-6">{description}</p>
+            <p className="text-gray-500 max-w-sm mb-6">{description}</p>
             {action}
         </motion.div>
     );
+
 }

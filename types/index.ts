@@ -17,6 +17,7 @@ export type LauncherIcon = 'message' | 'bot' | 'sparkles' | 'headphones' | 'help
 export interface LauncherConfig {
     backgroundColor: string;
     borderRadius: number;
+    padding: number;
     icon: LauncherIcon;
     logoUrl: string;
     size: number;
@@ -80,6 +81,7 @@ export interface Chatbot {
 export const defaultLauncher: LauncherConfig = {
     backgroundColor: '#667eea',
     borderRadius: 50,
+    padding: 8,
     icon: 'message',
     logoUrl: '',
     size: 56,

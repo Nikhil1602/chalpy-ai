@@ -31,11 +31,12 @@ export interface Chatbot {
 }
 
 interface ChatbotCardProps {
+    deleteChatbot: any;
     chatbot: Chatbot;
     index: number;
 }
 
-export function ChatbotCard({ chatbot, index }: ChatbotCardProps) {
+export function ChatbotCard({ deleteChatbot, chatbot, index }: ChatbotCardProps) {
 
     const statusColors = {
         active: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
@@ -67,7 +68,7 @@ export function ChatbotCard({ chatbot, index }: ChatbotCardProps) {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className='bg-gray-900 border-none'>
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem className='hover:bg-gray-800 cursor-pointer'>
+                                    <DropdownMenuItem onClick={() => deleteChatbot(chatbot.id)} className='hover:bg-gray-800 cursor-pointer'>
                                         <Trash className="w-4 h-4 mr-2 text-white" />
                                         Delete
                                     </DropdownMenuItem>

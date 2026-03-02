@@ -38,7 +38,7 @@ export function ChatPreview({ theme, botName }: ChatPreviewProps) {
 
     const renderLauncherContent = () => {
         if (launcher.logoUrl) {
-            return <img src={launcher.logoUrl} alt="Bot" className="w-6 h-6 rounded-full object-contain" />;
+            return <img src={launcher.logoUrl} alt="Bot" className={`w-${launcher.padding} h-${launcher.padding} rounded-full object-contain`} />;
         }
         return launcherIconMap[launcher.icon] || <MessageSquare className="w-6 h-6" />;
     };
@@ -48,7 +48,7 @@ export function ChatPreview({ theme, botName }: ChatPreviewProps) {
             {/* Floating launcher button */}
             <AnimatePresence>
                 {!isOpen && (
-                    <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={() => setIsOpen(true)} className={`absolute ${positionClasses[theme.position]} shadow-xl cursor-pointer flex items-center justify-center text-white z-10`} style={{ background: launcher.backgroundColor, borderRadius: `${launcher.borderRadius}%`, width: launcher.size, height: launcher.size }}>
+                    <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={() => setIsOpen(true)} className={`absolute ${positionClasses[theme.position]} shadow-xl cursor-pointer flex items-center justify-center text-white z-10`} style={{ background: launcher.backgroundColor, borderRadius: `${launcher.borderRadius}%`, width: launcher.size, height: launcher.size, padding: launcher.padding ?? 8 }}>
                         {renderLauncherContent()}
                     </motion.button>
                 )}
