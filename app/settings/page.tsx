@@ -1,4 +1,4 @@
-import SidebarContainer from '@/components/navigation/SidebarContainer';
+import SidebarContainer from '@/components/layout/SidebarContainer';
 
 const Settings = () => {
     return (

@@ -2,6 +2,7 @@ import Image from "next/image";
 import AnimatedSection from "./AnimatedSection";
 
 const CustomizationSection = () => {
+
     return (
         <section className="section-padding relative">
             <div className="absolute inset-0 bg-linear-to-b from-background via-secondary/10 to-background" />
@@ -93,9 +94,7 @@ const CustomizationSection = () => {
                                     <div className="rounded-2xl border border-orange-500/20 bg-card overflow-hidden glow-sm">
                                         {/* Header */}
                                         <div className="bg-orange-500/10 px-4 py-3 flex items-center gap-2">
-                                            {/* <div className="w-6 h-6 p-1 rounded-full bg-orange-500/20 flex items-center justify-center text-[10px] text-primary font-bold"> */}
                                             <Image src="/logo.png" alt="Chalpy AI Logo" width={30} height={30} />
-                                            {/* </div> */}
                                             <span className="text-sm font-semibold text-foreground">Chalpy Bot</span>
                                             <div className="ml-auto w-2 h-2 rounded-full bg-orange-500" />
                                         </div>
@@ -135,6 +134,7 @@ const CustomizationSection = () => {
             </div>
         </section>
     );
+
 };
 
 export default CustomizationSection;

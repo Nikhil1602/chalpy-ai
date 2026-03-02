@@ -1,10 +1,11 @@
 import { motion } from 'motion/react';
-import { Bot, MessageCircle, MessageSquare, MoreVertical, Play, Settings } from 'lucide-react';
+import { Bot, MessageCircle, MoreVertical, Play, Settings, Trash } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from "next/link";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export interface GuardrailRule {
     id: string;
@@ -45,8 +46,8 @@ export function ChatbotCard({ chatbot, index }: ChatbotCardProps) {
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: index * 0.1 }}>
             <Card className="group">
-                <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
+                <CardContent className="px-6">
+                    <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-3">
                             <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center group-hover:shadow-glow transition-shadow">
                                 <Bot className="w-6 h-6 text-orange-500" />
@@ -58,9 +59,21 @@ export function ChatbotCard({ chatbot, index }: ChatbotCardProps) {
                                 <p className="text-sm text-gray-500">{chatbot.role}</p>
                             </div>
                         </div>
-                        <Button variant="ghost" size="icon" className="cursor-pointer bg-orange-500/20 hover:bg-orange-500/50 ">
-                            <MoreVertical className="w-4 h-4" />
-                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="cursor-pointer bg-orange-500/20 hover:bg-orange-500/50 ">
+                                    <MoreVertical className="w-4 h-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className='bg-gray-900 border-none'>
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem className='hover:bg-gray-800 cursor-pointer'>
+                                        <Trash className="w-4 h-4 mr-2 text-white" />
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
 
                     <p className="text-sm text-gray-500 mb-4 line-clamp-2">
@@ -83,13 +96,13 @@ export function ChatbotCard({ chatbot, index }: ChatbotCardProps) {
                             <span>1.2k conversations</span>
                         </div>
                         <div className="flex gap-2">
-                            <Link href={`/chatbots/${chatbot.id}/playground`}>
+                            <Link href={`/chatbot/${chatbot.id}/playground`}>
                                 <Button className='cursor-pointer bg-orange-500 hover:bg-orange-600' variant="ghost" size="sm">
                                     <Play className="w-4 h-4 mr-1" />
                                     Test
                                 </Button>
                             </Link>
-                            <Link href={`/chatbots/${chatbot.id}`}>
+                            <Link href={`/chatbot/${chatbot.id}`}>
                                 <Button className='cursor-pointer bg-gray-700 hover:bg-gray-800' variant="ghost" size="sm">
                                     <Settings className="w-4 h-4 mr-1" />
                                     Edit

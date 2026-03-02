@@ -27,58 +27,17 @@ export function MetricChart({ title, data, type = 'area', color = 'hsl(23 100% 5
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 70%)" vertical={false} />
-                                <XAxis
-                                    dataKey="date"
-                                    tick={{ fontSize: 12, fill: 'hsl(0 0% 70%)' }}
-                                    axisLine={false}
-                                    tickLine={false}
-                                />
-                                <YAxis
-                                    tick={{ fontSize: 12, fill: 'hsl(0 0% 70%)' }}
-                                    axisLine={false}
-                                    tickLine={false}
-                                />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'hsl(11.2 7.84% 10.1%)',
-                                        border: '1px solid hsl(var(--border))',
-                                        borderRadius: '8px',
-                                        boxShadow: 'var(--shadow-lg)',
-                                    }}
-                                    labelStyle={{ color: 'hsl(0 0% 100%)' }}
-                                />
-                                <Area
-                                    type="monotone"
-                                    dataKey="value"
-                                    stroke={color}
-                                    strokeWidth={2}
-                                    fill={color}
-                                    fillOpacity={0.3}
-                                />
+                                <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'hsl(0 0% 70%)' }} axisLine={false} tickLine={false} />
+                                <YAxis tick={{ fontSize: 12, fill: 'hsl(0 0% 70%)' }} axisLine={false} tickLine={false} />
+                                <Tooltip contentStyle={{ backgroundColor: 'hsl(11.2 7.84% 10.1%)', border: '1px solid hsl(var(--border))', borderRadius: '8px', boxShadow: 'var(--shadow-lg)' }} labelStyle={{ color: 'hsl(0 0% 100%)' }} />
+                                <Area type="monotone" dataKey="value" stroke={color} strokeWidth={2} fill={color} fillOpacity={0.3} />
                             </AreaChart>
                         ) : (
                             <BarChart data={data}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 70%)" vertical={false} />
-                                <XAxis
-                                    dataKey="date"
-                                    tick={{ fontSize: 12, fill: 'hsl(0 0% 70%)' }}
-                                    axisLine={false}
-                                    tickLine={false}
-                                />
-                                <YAxis
-                                    tick={{ fontSize: 12, fill: 'hsl(0 0% 70%)' }}
-                                    axisLine={false}
-                                    tickLine={false}
-                                />
-                                <Tooltip
-                                    cursor={{ fill: "#1e293b", opacity: 0.8 }}
-                                    contentStyle={{
-                                        backgroundColor: 'hsl(11.2 7.84% 10.1%)',
-                                        color: 'hsl(0 0% 100%)',
-                                        border: '1px solid hsl(var(--border))',
-                                        borderRadius: '8px',
-                                    }}
-                                />
+                                <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'hsl(0 0% 70%)' }} axisLine={false} tickLine={false} />
+                                <YAxis tick={{ fontSize: 12, fill: 'hsl(0 0% 70%)' }} axisLine={false} tickLine={false} />
+                                <Tooltip cursor={{ fill: "#1e293b", opacity: 0.8 }} contentStyle={{ backgroundColor: 'hsl(11.2 7.84% 10.1%)', color: 'hsl(0 0% 100%)', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
                                 <Bar dataKey="value" fill={color} radius={[4, 4, 0, 0]} />
                             </BarChart>
                         )}

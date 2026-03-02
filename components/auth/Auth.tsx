@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Loader, LoaderCircle } from "lucide-react";
-import Image from "next/image";
+import { Mail, Lock, User, ArrowRight, Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { signIn } from 'next-auth/react'
 import { useToast } from "@/hooks";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const formVariants = {
     hidden: { opacity: 0, x: 20, filter: "blur(4px)" },
@@ -178,46 +178,17 @@ const AuthPage = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center gradient-mesh relative overflow-hidden px-4">
+
             {/* Floating orbs */}
-            <motion.div
-                className="pointer-events-none absolute w-[500px] h-[500px] rounded-full blur-3xl"
-                style={{
-                    background: "radial-gradient(circle, hsl(24 95% 53% / 0.18), transparent 70%)",
-                    top: "-10%",
-                    right: "-5%",
-                }}
-                animate={{ y: [0, 30, 0], x: [0, -15, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            />
-
-            <motion.div
-                className="pointer-events-none absolute w-[400px] h-[400px] rounded-full blur-3xl"
-                style={{
-                    background: "radial-gradient(circle, hsl(30 100% 60% / 0.14), transparent 70%)",
-                    bottom: "-10%",
-                    left: "-5%",
-                }}
-                animate={{ y: [0, -20, 0], x: [0, 20, 0] }}
-                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            />
-
+            <motion.div className="pointer-events-none absolute w-[500px] h-[500px] rounded-full blur-3xl" style={{ background: "radial-gradient(circle, hsl(24 95% 53% / 0.18), transparent 70%)", top: "-10%", right: "-5%" }} animate={{ y: [0, 30, 0], x: [0, -15, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} />
+            <motion.div className="pointer-events-none absolute w-[400px] h-[400px] rounded-full blur-3xl" style={{ background: "radial-gradient(circle, hsl(30 100% 60% / 0.14), transparent 70%)", bottom: "-10%", left: "-5%" }} animate={{ y: [0, -20, 0], x: [0, 20, 0] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} />
 
             {showDone ?
-                <motion.div
-                    initial={{ opacity: 0, y: 30, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    className="w-full max-w-md border p-8 rounded-2xl text-center"
-                >
+                <motion.div initial={{ opacity: 0, y: 30, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }} className="w-full max-w-md border p-8 rounded-2xl text-center">
                     <h1 className="text-2xl font-bold text-gray-200">Verification link sent! ✅</h1>
                     <p className="text-gray-500 mt-2">You're all set up and ready to go. kindly open your email to verify your account.</p>
                 </motion.div>
-                : <motion.div
-                    initial={{ opacity: 0, y: 30, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    className="w-full max-w-md"
-                >
+                : <motion.div initial={{ opacity: 0, y: 30, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }} className="w-full max-w-md">
                     <div className="border border-gray-700 glow-lg rounded-2xl m-2 sm:m-8 p-8 shadow-2xl">
                         {/* Header */}
                         <motion.div className="text-center mb-2" layout>
@@ -225,13 +196,7 @@ const AuthPage = () => {
                                 <Image src="/logo.png" alt="Logo" width={50} height={50} />
                             </div>
                             <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={isSignUp ? "signup" : "signin"}
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
-                                    transition={{ duration: 0.25 }}
-                                >
+                                <motion.div key={isSignUp ? "signup" : "signin"} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.25 }}>
                                     <h1 className="text-2xl font-bold text-gray-200">
                                         {isSignUp ? "Create account" : "Welcome back"}
                                     </h1>
@@ -244,21 +209,11 @@ const AuthPage = () => {
 
                         {/* Social buttons */}
                         <motion.div className="space-y-3 mb-4" variants={itemVariants}>
-                            <motion.button
-                                onClick={() => signIn("google")}
-                                className="flex cursor-pointer gap-2 items-center justify-center w-full py-3 px-4 rounded-xl border border-border bg-orange-600 text-sm text-foreground hover:bg-primary/5 transition-colors"
-                                whileHover={{ scale: 1.01 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
+                            <motion.button onClick={() => signIn("google")} className="flex cursor-pointer gap-2 items-center justify-center w-full py-3 px-4 rounded-xl border border-border bg-orange-600 text-sm text-foreground hover:bg-primary/5 transition-colors" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
                                 <FaGoogle className="w-5 h-5 text-foreground" />
                                 <span className="text-secondary-foreground text-sm">Continue with Google</span>
                             </motion.button>
-                            <motion.button
-                                onClick={() => signIn("github")}
-                                className="flex cursor-pointer gap-2 items-center justify-center w-full py-3 px-4 rounded-xl border border-border bg-gray-800 text-sm text-foreground hover:bg-primary/5 transition-colors"
-                                whileHover={{ scale: 1.01 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
+                            <motion.button onClick={() => signIn("github")} className="flex cursor-pointer gap-2 items-center justify-center w-full py-3 px-4 rounded-xl border border-border bg-gray-800 text-sm text-foreground hover:bg-primary/5 transition-colors" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
                                 <FaGithub className="w-5 h-5 text-foreground" />
                                 <span className="text-secondary-foreground text-sm">Continue with GitHub</span>
                             </motion.button>
@@ -279,14 +234,7 @@ const AuthPage = () => {
                                         <label className="text-xs font-medium text-gray-400 mb-1.5 block">Full Name</label>
                                         <div className="relative">
                                             <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                                            <input
-                                                type="text"
-                                                value={name}
-                                                required={isSignUp}
-                                                onChange={(e) => setName(e.target.value)}
-                                                placeholder="John Doe"
-                                                className="w-full pl-10 pr-4 bg-gray-900 py-3 rounded-xl bg-input border border-border text-gray-100 selection:bg-orange-800 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/50 transition-all duration-200"
-                                            />
+                                            <input type="text" value={name} required={isSignUp} onChange={(e) => setName(e.target.value)} placeholder="John Doe" className="w-full pl-10 pr-4 bg-gray-900 py-3 rounded-xl bg-input border border-border text-gray-100 selection:bg-orange-800 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/50 transition-all duration-200" />
                                         </div>
                                     </motion.div>
                                 )}
@@ -295,14 +243,7 @@ const AuthPage = () => {
                                     <label className="text-xs font-medium text-gray-400 mb-1.5 block">Email</label>
                                     <div className="relative">
                                         <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                                        <input
-                                            type="email"
-                                            value={email}
-                                            required
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="you@example.com"
-                                            className="w-full pl-10 pr-4 py-3 bg-gray-900 rounded-xl bg-input border border-border text-gray-100 selection:bg-orange-800 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/50 transition-all duration-200"
-                                        />
+                                        <input type="email" value={email} required onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="w-full pl-10 pr-4 py-3 bg-gray-900 rounded-xl bg-input border border-border text-gray-100 selection:bg-orange-800 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/50 transition-all duration-200" />
                                     </div>
                                 </motion.div>
 
@@ -310,19 +251,8 @@ const AuthPage = () => {
                                     <label className="text-xs font-medium text-gray-400 mb-1.5 block">Password</label>
                                     <div className="relative">
                                         <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                                        <input
-                                            type={showPassword ? "text" : "password"}
-                                            value={password}
-                                            required
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="••••••••"
-                                            className="w-full pl-10 pr-12 bg-gray-900 py-3 rounded-xl bg-input border border-border text-gray-100 selection:bg-orange-800 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/50 transition-all duration-200"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-100 transition-colors"
-                                        >
+                                        <input type={showPassword ? "text" : "password"} value={password} required onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="w-full pl-10 pr-12 bg-gray-900 py-3 rounded-xl bg-input border border-border text-gray-100 selection:bg-orange-800 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/50 transition-all duration-200" />
+                                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-100 transition-colors">
                                             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                         </button>
                                     </div>
@@ -337,13 +267,7 @@ const AuthPage = () => {
                                 )}
 
                                 <motion.div variants={itemVariants}>
-                                    <motion.button
-                                        type="submit"
-                                        disabled={showLoader}
-                                        className={`w-full py-3 px-4 rounded-xl bg-orange-500 text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 ${showLoader ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-orange-600"}`}
-                                        whileHover={showLoader ? undefined : { scale: 1.01 }}
-                                        whileTap={showLoader ? undefined : { scale: 0.98 }}
-                                    >
+                                    <motion.button type="submit" disabled={showLoader} className={`w-full py-3 px-4 rounded-xl bg-orange-500 text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 ${showLoader ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-orange-600"}`} whileHover={showLoader ? undefined : { scale: 1.01 }} whileTap={showLoader ? undefined : { scale: 0.98 }}>
                                         <>
                                             {showLoader ? (
                                                 <div className="w-4 flex items-center h-4 border-t-2 border-r-2 border-orange-500 rounded-full"><LoaderCircle className="w-8 h-8 animate-spin text-white" /></div>
@@ -369,11 +293,7 @@ const AuthPage = () => {
 
                         {(!isSignUp && showResend) && (
                             <motion.div variants={itemVariants} className="text-center">
-                                <button
-                                    type="button"
-                                    onClick={handleResendVerification}
-                                    className="text-xs cursor-pointer hover:underline text-orange-500 hover:text-orange-500/80 transition-colors"
-                                >
+                                <button type="button" onClick={handleResendVerification} className="text-xs cursor-pointer hover:underline text-orange-500 hover:text-orange-500/80 transition-colors">
                                     Resend verification email
                                 </button>
                             </motion.div>
