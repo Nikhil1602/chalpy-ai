@@ -253,3 +253,13 @@ export interface StatCardProps {
     icon: LucideIcon;
     index?: number;
 }
+
+export interface WorkspaceContextType {
+    currentWorkspace: Workspace | null;
+    chatbots: Chatbot[];
+    setCurrentWorkspace: (workspace: Workspace | null) => void;
+    addChatbot: (chatbot: Chatbot) => void;
+    updateChatbot: (id: string, updates: Partial<Chatbot>) => void;
+    deleteChatbot: (id: string) => void;
+    getChatbot: (id: string) => Chatbot | undefined;
+}

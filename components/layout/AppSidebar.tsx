@@ -6,10 +6,12 @@ import { Separator } from '@/components/ui/separator';
 import { usePathname } from 'next/navigation';
 import Link from "next/link";
 import Image from 'next/image';
+import { useWorkspace } from "@/store/WorkspaceContext";
 
 export default function AppSidebar() {
 
     const pathname = usePathname();
+    const { currentWorkspace } = useWorkspace();
 
     const menuItems = [
         { id: 'menu-item-1', title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -30,6 +32,13 @@ export default function AppSidebar() {
                             Chalpy AI
                         </span>
                     </div>
+                </div>
+
+                <Separator className="bg-gray-800" />
+
+                <div className="my-1">
+                    <div className="text-xs text-gray-500 ml-4">Workspace</div>
+                    <div className="text-sm text-gray-300 ml-4 mt-1">{currentWorkspace?.name}</div>
                 </div>
 
                 <Separator className="bg-gray-800" />

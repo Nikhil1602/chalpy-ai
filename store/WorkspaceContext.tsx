@@ -1,18 +1,8 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { Chatbot, Workspace } from '@/types';
+import { Chatbot, Workspace, WorkspaceContextType } from '@/types';
 import { defaultAIModel, defaultTheme } from '@/lib/constants';
-
-interface WorkspaceContextType {
-    currentWorkspace: Workspace | null;
-    chatbots: Chatbot[];
-    setCurrentWorkspace: (workspace: Workspace | null) => void;
-    addChatbot: (chatbot: Chatbot) => void;
-    updateChatbot: (id: string, updates: Partial<Chatbot>) => void;
-    deleteChatbot: (id: string) => void;
-    getChatbot: (id: string) => Chatbot | undefined;
-}
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
