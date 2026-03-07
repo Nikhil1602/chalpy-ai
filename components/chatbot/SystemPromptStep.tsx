@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion } from 'motion/react';
 import { Plus, X } from 'lucide-react';
+import { SystemPromptStepProps } from '@/types';
 
 const personaTemplates = [
     { name: 'Customer Support', prompt: 'You are a friendly and efficient customer support agent. Always greet the user warmly, acknowledge their issue, and provide clear step-by-step solutions. If you cannot resolve the issue, escalate politely.' },
@@ -29,11 +30,6 @@ const responseFormats = [
     { name: 'Conversational', instruction: 'Respond in a natural, conversational tone. Use casual language and occasional emojis.' },
     { name: 'Formal', instruction: 'Use formal language with proper grammar. Avoid contractions and slang.' },
 ];
-
-interface SystemPromptStepProps {
-    systemPrompt: string;
-    onChange: (prompt: string) => void;
-}
 
 export function SystemPromptStep({ systemPrompt, onChange }: SystemPromptStepProps) {
 

@@ -13,7 +13,7 @@ import Link from "next/link";
 
 const Dashboard = () => {
 
-    const { chatbots } = useWorkspace();
+    const { chatbots, deleteChatbot } = useWorkspace();
 
     const mockChartData = [
         { date: 'Mon', value: 120 },
@@ -60,7 +60,7 @@ const Dashboard = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {chatbots.slice(0, 4).map((chatbot, index) => (
-                        <ChatbotCard key={chatbot.id} chatbot={chatbot} index={index} />
+                        <ChatbotCard deleteChatbot={deleteChatbot} key={chatbot.id} chatbot={chatbot} index={index} />
                     ))}
                 </div>
             </motion.div>

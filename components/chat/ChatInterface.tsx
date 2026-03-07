@@ -1,28 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Send, Loader2, Sparkles, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Badge } from '../ui/badge';
-
-export interface Message {
-    id: string;
-    role: 'user' | 'assistant' | 'system';
-    content: string;
-    timestamp: Date;
-    metadata?: {
-        sources?: string[];
-        tokensUsed?: number;
-    };
-}
-
-interface ChatInterfaceProps {
-    messages: Message[];
-    isLoading: boolean;
-    onSendMessage: (message: string) => void;
-    placeholder?: string;
-    showSources?: boolean;
-}
+import { Badge } from '@/components/ui/badge';
+import { ChatInterfaceProps } from '@/types';
 
 export function ChatInterface({ messages, isLoading, onSendMessage, placeholder = 'Type your message...', showSources = false }: ChatInterfaceProps) {
 

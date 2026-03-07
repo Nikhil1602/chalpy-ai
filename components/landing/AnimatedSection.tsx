@@ -1,13 +1,8 @@
 "use client"
 
+import { AnimatedSectionProps } from "@/types";
 import { motion, useInView } from "motion/react";
-import { useRef, type ReactNode } from "react";
-
-interface AnimatedSectionProps {
-    children: ReactNode;
-    className?: string;
-    delay?: number;
-}
+import { useRef } from "react";
 
 const AnimatedSection = ({ children, className = "", delay = 0 }: AnimatedSectionProps) => {
 

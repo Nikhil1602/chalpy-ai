@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "motion/react";
-import { ArrowRight, Check, Play, Sparkles } from "lucide-react";
+import { ArrowRight, Play, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 const HeroSection = () => {

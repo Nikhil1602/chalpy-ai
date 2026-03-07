@@ -1,62 +1,15 @@
-import { FaReact } from "react-icons/fa";
-import { RiTailwindCssFill } from "react-icons/ri";
-import { RiNextjsFill } from "react-icons/ri";
-import { BiLogoTypescript } from "react-icons/bi";
-import { SiShadcnui } from "react-icons/si";
-import { PiWebhooksLogo } from "react-icons/pi";
-import { PackageTypes } from "@/types";
-
-export const packageIncludes: PackageTypes = [
-    {
-        id: 1,
-        name: "React 19",
-        Icon: FaReact
-    },
-    {
-        id: 2,
-        name: "Tailwind v4",
-        Icon: RiTailwindCssFill
-    },
-    {
-        id: 3,
-        name: "Next 16",
-        Icon: RiNextjsFill
-    },
-    {
-        id: 4,
-        name: "Typescript 5",
-        Icon: BiLogoTypescript
-    },
-    {
-        id: 5,
-        name: "Shadcn/UI (Neutral)",
-        Icon: SiShadcnui
-    },
-    {
-        id: 6,
-        name: "React Icons v5.5",
-        Icon: FaReact
-    },
-    {
-        id: 7,
-        name: `Custom Hooks: 
-    - useBrowserStorage
-    - useIsMobile 
-    - useOnlineStatus`,
-        Icon: PiWebhooksLogo
-    }
-]
+import { AIModelConfig, LauncherConfig, ThemeConfig } from "@/types";
 
 export const htmlTemplate = (templateDetails: { title: string, description: string, link: string, name: string, linkText: string }) => `
 <!DOCTYPE html>
 <html>
-  <body style="margin:0;padding:0;background-color:#f9fafb;font-family:Arial,Helvetica,sans-serif;">
+  <body style="margin:0;padding:20px;background-color:#f9fafb;font-family:Arial,Helvetica,sans-serif;">
     <table align="center" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:auto;background-color:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.05);">
       
       <!-- Header -->
       <tr>
         <td style="background-color:#f97316;padding:30px 20px;text-align:center;">
-          <img src="${process.env.NEXTAUTH_URL}/logo.png" alt="Logo" width="80" style="display:block;margin:auto;border-radius:12px;background:#ffffff;padding:8px;" />
+          <img src="https://raw.githubusercontent.com/Nikhil1602/chalpy-ai/refs/heads/main/public/logo.png" alt="Logo" width="80" style="display:block;margin:auto;border-radius:12px;background:#ffffff;padding:8px;" />
         </td>
       </tr>
 
@@ -119,5 +72,33 @@ export const htmlTemplate = (templateDetails: { title: string, description: stri
     </table>
   </body>
 </html>
+`;
 
-`
+export const defaultLauncher: LauncherConfig = {
+  backgroundColor: '#667eea',
+  borderRadius: 50,
+  padding: 8,
+  icon: 'message',
+  logoUrl: '',
+  size: 56,
+};
+
+export const defaultTheme: ThemeConfig = {
+  backgroundColor: '#ffffff',
+  gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  gradientFrom: '#667eea',
+  gradientTo: '#764ba2',
+  textColor: '#1a1a2e',
+  borderRadius: 16,
+  fontFamily: 'Inter',
+  logoUrl: '',
+  position: 'bottom-right',
+  accentColor: '#667eea',
+  headerColor: '#667eea',
+  launcher: defaultLauncher,
+};
+
+export const defaultAIModel: AIModelConfig = {
+  model: 'chatgpt',
+  apiKey: '',
+};

@@ -1,10 +1,5 @@
-import { IconType } from "react-icons"
-
-export type PackageTypes = {
-    id: number,
-    name: string,
-    Icon: IconType
-}[];
+import { LucideIcon } from "lucide-react";
+import { ChangeEvent, ReactNode } from "react";
 
 export type StorageType = 'local' | 'session';
 
@@ -21,7 +16,7 @@ export interface LauncherConfig {
     icon: LauncherIcon;
     logoUrl: string;
     size: number;
-}
+};
 
 export interface ThemeConfig {
     backgroundColor: string;
@@ -36,7 +31,7 @@ export interface ThemeConfig {
     accentColor: string;
     headerColor: string;
     launcher: LauncherConfig;
-}
+};
 
 export type AIModel = 'chatgpt' | 'claude' | 'meta' | 'grok' | 'mistral' | 'gemini' | 'deepseek';
 
@@ -44,12 +39,12 @@ export interface AIModelConfig {
     model: AIModel;
     apiKey: string;
     modelVersion?: string;
-}
+};
 
 export type TextModel = {
     value: string
     label: string
-}
+};
 
 export type AIPlatform = {
     id: AIModel
@@ -58,7 +53,7 @@ export type AIPlatform = {
     description: string
     iconSrc: string
     models: TextModel[]
-}
+};
 
 export interface Chatbot {
     id: string;
@@ -76,35 +71,6 @@ export interface Chatbot {
     workspaceId: string;
     theme: ThemeConfig;
     aiModel: AIModelConfig;
-}
-
-export const defaultLauncher: LauncherConfig = {
-    backgroundColor: '#667eea',
-    borderRadius: 50,
-    padding: 8,
-    icon: 'message',
-    logoUrl: '',
-    size: 56,
-};
-
-export const defaultTheme: ThemeConfig = {
-    backgroundColor: '#ffffff',
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    gradientFrom: '#667eea',
-    gradientTo: '#764ba2',
-    textColor: '#1a1a2e',
-    borderRadius: 16,
-    fontFamily: 'Inter',
-    logoUrl: '',
-    position: 'bottom-right',
-    accentColor: '#667eea',
-    headerColor: '#667eea',
-    launcher: defaultLauncher,
-};
-
-export const defaultAIModel: AIModelConfig = {
-    model: 'chatgpt',
-    apiKey: '',
 };
 
 export interface GuardrailRule {
@@ -112,7 +78,7 @@ export interface GuardrailRule {
     name: string;
     description: string;
     enabled: boolean;
-}
+};
 
 export interface KnowledgeSource {
     id: string;
@@ -123,7 +89,7 @@ export interface KnowledgeSource {
     status: 'processing' | 'ready' | 'error';
     createdAt: Date;
     chatbotId: string;
-}
+};
 
 export interface Message {
     id: string;
@@ -134,7 +100,7 @@ export interface Message {
         sources?: string[];
         tokensUsed?: number;
     };
-}
+};
 
 export interface Conversation {
     id: string;
@@ -142,7 +108,7 @@ export interface Conversation {
     messages: Message[];
     createdAt: Date;
     updatedAt: Date;
-}
+};
 
 export interface DeploymentConfig {
     chatbotId: string;
@@ -150,7 +116,7 @@ export interface DeploymentConfig {
     publicEndpoint: string;
     token: string;
     customization: WidgetCustomization;
-}
+};
 
 export interface WidgetCustomization {
     primaryColor: string;
@@ -158,7 +124,7 @@ export interface WidgetCustomization {
     welcomeMessage: string;
     placeholderText: string;
     showBranding: boolean;
-}
+};
 
 export interface Workspace {
     id: string;
@@ -168,7 +134,7 @@ export interface Workspace {
     members: WorkspaceMember[];
     plan: 'free' | 'pro' | 'enterprise';
     createdAt: Date;
-}
+};
 
 export interface WorkspaceMember {
     id: string;
@@ -177,12 +143,113 @@ export interface WorkspaceMember {
     name: string;
     role: 'owner' | 'admin' | 'member';
     avatar?: string;
-}
+};
 
 export interface User {
-    id: string;
     email: string;
     name: string;
+    password: string;
     avatar?: string;
-    workspaces: string[];
+};
+
+export interface AuthState {
+    hasSignUp: boolean;
+    isVerificationSend: boolean;
+    isVerificationResend: boolean;
+    isLoading: boolean;
+};
+
+export interface AuthContextType {
+    user: User;
+    authState: AuthState;
+    handleAuthState: (name: "isLoading" | "hasSignUp" | "isVerificationSend" | "isVerificationResend", value: boolean) => void;
+    isAuthenticated: boolean;
+    login: (e: React.FormEvent) => Promise<void>;
+    logout: () => void;
+    signup: (e: React.FormEvent) => Promise<void>;
+    forgotPassword: () => Promise<void>;
+    resendVerification: () => Promise<void>;
+    handleAuthChange: (e: ChangeEvent<HTMLInputElement>) => void;
+};
+
+export interface ChatbotCardProps {
+    deleteChatbot: any;
+    chatbot: Chatbot;
+    index: number;
+}
+
+export interface ChatPreviewProps {
+    theme: ThemeConfig;
+    botName: string;
+}
+
+export interface Step {
+    id: string;
+    label: string;
+    icon: React.ReactNode;
+}
+
+export interface StepIndicatorProps {
+    steps: Step[];
+    currentStep: number;
+    completedSteps: Set<number>;
+    onStepClick: (index: number) => void;
+}
+
+export interface SystemPromptStepProps {
+    systemPrompt: string;
+    onChange: (prompt: string) => void;
+}
+
+export interface ThemeCustomizerProps {
+    theme: ThemeConfig;
+    onChange: (theme: ThemeConfig) => void;
+    botName: string;
+}
+
+export interface AIModelStepProps {
+    config: AIModelConfig;
+    onChange: (config: AIModelConfig) => void;
+}
+
+export interface AnimatedSectionProps {
+    children: ReactNode;
+    className?: string;
+    delay?: number;
+}
+
+export interface PageHeaderProps {
+    title: string;
+    description?: string;
+    children?: React.ReactNode;
+    className?: string;
+}
+
+export interface ChatInterfaceProps {
+    messages: Message[];
+    isLoading: boolean;
+    onSendMessage: (message: string) => void;
+    placeholder?: string;
+    showSources?: boolean;
+}
+
+export interface UseChatbotOptions {
+    chatbotId: string;
+    onMessage?: (message: Message) => void;
+}
+
+export interface MetricChartProps {
+    title: string;
+    data: Array<{ date: string; value: number }>;
+    type?: 'area' | 'bar';
+    color?: string;
+}
+
+export interface StatCardProps {
+    title: string;
+    value: string | number;
+    change?: string;
+    changeType?: 'positive' | 'negative' | 'neutral';
+    icon: LucideIcon;
+    index?: number;
 }

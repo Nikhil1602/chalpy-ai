@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, X, MessageSquare, Sparkles, Headphones, HelpCircle } from 'lucide-react';
-import { ThemeConfig, LauncherIcon, defaultLauncher } from '@/types';
-
-interface ChatPreviewProps {
-    theme: ThemeConfig;
-    botName: string;
-}
+import { LauncherIcon, ChatPreviewProps } from '@/types';
+import { defaultLauncher } from '@/lib/constants';
 
 const sampleMessages = [
     { role: 'assistant' as const, text: 'Hi there! 👋 How can I help you today?' },

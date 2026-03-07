@@ -1,16 +1,7 @@
 import { motion } from 'motion/react';
-import { LucideIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-
-interface StatCardProps {
-    title: string;
-    value: string | number;
-    change?: string;
-    changeType?: 'positive' | 'negative' | 'neutral';
-    icon: LucideIcon;
-    index?: number;
-}
+import { StatCardProps } from '@/types';
 
 export function StatCard({ title, value, change, changeType = 'neutral', icon: Icon, index = 0 }: StatCardProps) {
 

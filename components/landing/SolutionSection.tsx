@@ -1,4 +1,4 @@
-import AnimatedSection from "./AnimatedSection";
+import AnimatedSection from "@/components/landing/AnimatedSection";
 import { Brain, Key, Layers, Palette } from "lucide-react";
 
 const solutions = [
@@ -29,6 +29,7 @@ const solutions = [
 ];
 
 const SolutionSection = () => {
+
     return (
         <section className="section-padding">
             <div className="container mx-auto max-w-5xl">
@@ -63,6 +64,7 @@ const SolutionSection = () => {
             </div>
         </section>
     );
+
 };
 
 export default SolutionSection;

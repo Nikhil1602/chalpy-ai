@@ -1,4 +1,4 @@
-import AnimatedSection from "./AnimatedSection";
+import AnimatedSection from "@/components/landing/AnimatedSection";
 import { Headphones, Target, Wrench, Rocket } from "lucide-react";
 
 const useCases = [
@@ -33,6 +33,7 @@ const useCases = [
 ];
 
 const UseCasesSection = () => {
+
     return (
         <section id="use-cases" className="section-padding relative">
             <div className="absolute inset-0 bg-linear-to-b from-background via-secondary/10 to-background" />
@@ -69,6 +70,7 @@ const UseCasesSection = () => {
             </div>
         </section>
     );
+
 };
 
 export default UseCasesSection;

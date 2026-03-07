@@ -1,5 +1,5 @@
 import Image from "next/image";
-import AnimatedSection from "./AnimatedSection";
+import AnimatedSection from "@/components/landing/AnimatedSection";
 
 const CustomizationSection = () => {
 

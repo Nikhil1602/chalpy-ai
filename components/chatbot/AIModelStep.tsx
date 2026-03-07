@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { AIModelConfig, AIModel, AIPlatform } from '@/types';
+import { AIModel, AIPlatform, AIModelStepProps } from '@/types';
 import { cn } from '@/lib/utils';
 import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'motion/react';
-import Image from 'next/image';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const aiPlatforms: AIPlatform[] = [
     {
@@ -102,11 +102,6 @@ const aiPlatforms: AIPlatform[] = [
         ],
     },
 ]
-
-interface AIModelStepProps {
-    config: AIModelConfig;
-    onChange: (config: AIModelConfig) => void;
-}
 
 export function AIModelStep({ config, onChange }: AIModelStepProps) {
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { Chatbot, Workspace, defaultTheme, defaultAIModel } from '@/types';
+import { Chatbot, Workspace } from '@/types';
+import { defaultAIModel, defaultTheme } from '@/lib/constants';
 
 interface WorkspaceContextType {
     currentWorkspace: Workspace | null;

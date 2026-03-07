@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { ThemeConfig, FontFamily, ChatbotPosition, LauncherIcon, defaultLauncher } from '@/types';
-import { ChatPreview } from './ChatPreview';
+import { FontFamily, ChatbotPosition, LauncherIcon, ThemeCustomizerProps } from '@/types';
+import { ChatPreview } from '@/components/chatbot/ChatPreview';
 import { Upload, MousePointerClick, MessageSquare, Bot, Sparkles, Headphones, HelpCircle, X } from 'lucide-react';
+import { defaultLauncher } from '@/lib/constants';
 
 const fonts: { value: FontFamily; label: string }[] = [
     { value: 'Inter', label: 'Inter' },
@@ -40,12 +41,6 @@ const gradientPresets = [
     { from: '#fa709a', to: '#fee140' },
     { from: '#a18cd1', to: '#fbc2eb' },
 ];
-
-interface ThemeCustomizerProps {
-    theme: ThemeConfig;
-    onChange: (theme: ThemeConfig) => void;
-    botName: string;
-}
 
 export function ThemeCustomizer({ theme, onChange, botName }: ThemeCustomizerProps) {
 

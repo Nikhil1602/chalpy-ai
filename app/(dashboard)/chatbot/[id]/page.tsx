@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useWorkspace } from '@/store/WorkspaceContext';
-import { Chatbot, defaultTheme, defaultAIModel, GuardrailRule } from '@/types';
+import { Chatbot, GuardrailRule } from '@/types';
 import { motion, AnimatePresence } from 'motion/react';
 import { StepIndicator } from '@/components/chatbot/StepIndicator';
 import { ThemeCustomizer } from '@/components/chatbot/ThemeCustomizer';
@@ -18,6 +18,7 @@ import { AIModelStep } from '@/components/chatbot/AIModelStep';
 import { SystemPromptStep } from '@/components/chatbot/SystemPromptStep';
 import { useParams, useRouter } from 'next/navigation';
 import { useToast } from '@/hooks';
+import { defaultAIModel, defaultTheme } from '@/lib/constants';
 import SidebarContainer from '@/components/layout/SidebarContainer';
 import Link from 'next/link';
 

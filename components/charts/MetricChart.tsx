@@ -1,12 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-interface MetricChartProps {
-    title: string;
-    data: Array<{ date: string; value: number }>;
-    type?: 'area' | 'bar';
-    color?: string;
-}
+import { MetricChartProps } from '@/types';
 
 export function MetricChart({ title, data, type = 'area', color = 'hsl(23 100% 50%)' }: MetricChartProps) {
 

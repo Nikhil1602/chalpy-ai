@@ -1,5 +1,5 @@
 import Link from "next/link";
-import AnimatedSection from "./AnimatedSection";
+import AnimatedSection from "@/components/landing/AnimatedSection";
 import { ArrowRight, Shield } from "lucide-react";
 
 const FinalCTASection = () => {

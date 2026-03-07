@@ -1,4 +1,4 @@
-import AnimatedSection from "./AnimatedSection";
+import AnimatedSection from "@/components/landing/AnimatedSection";
 import { Shield, Eye, Server, KeyRound, CheckCircle2 } from "lucide-react";
 
 const trustPoints = [
@@ -10,6 +10,7 @@ const trustPoints = [
 ];
 
 const ModelSecuritySection = () => {
+
     return (
         <section id="security" className="section-padding">
             <div className="container mx-auto max-w-5xl">
@@ -87,6 +88,7 @@ const ModelSecuritySection = () => {
             </div>
         </section>
     );
+
 };
 
 export default ModelSecuritySection;

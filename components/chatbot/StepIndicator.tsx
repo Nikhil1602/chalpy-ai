@@ -2,19 +2,7 @@ import React from 'react';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'motion/react';
-
-interface Step {
-    id: string;
-    label: string;
-    icon: React.ReactNode;
-}
-
-interface StepIndicatorProps {
-    steps: Step[];
-    currentStep: number;
-    completedSteps: Set<number>;
-    onStepClick: (index: number) => void;
-}
+import { StepIndicatorProps } from '@/types';
 
 export function StepIndicator({ steps, currentStep, completedSteps, onStepClick }: StepIndicatorProps) {
 

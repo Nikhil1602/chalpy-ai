@@ -1,4 +1,4 @@
-import AnimatedSection from "./AnimatedSection";
+import AnimatedSection from "@/components/landing/AnimatedSection";
 import { Cpu, Upload, Paintbrush, Globe } from "lucide-react";
 
 const steps = [
@@ -29,6 +29,7 @@ const steps = [
 ];
 
 const HowItWorksSection = () => {
+
     return (
         <section id="how-it-works" className="section-padding">
             <div className="container mx-auto max-w-5xl">
@@ -66,6 +67,7 @@ const HowItWorksSection = () => {
             </div>
         </section>
     );
+
 };
 
 export default HowItWorksSection;

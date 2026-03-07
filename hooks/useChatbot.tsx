@@ -1,10 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Message } from '@/types';
-
-interface UseChatbotOptions {
-    chatbotId: string;
-    onMessage?: (message: Message) => void;
-}
+import { Message, UseChatbotOptions } from '@/types';
 
 export default function useChatbot({ chatbotId, onMessage }: UseChatbotOptions) {
 

@@ -1,4 +1,4 @@
-import AnimatedSection from "./AnimatedSection";
+import AnimatedSection from "@/components/landing/AnimatedSection";
 import { FileText, Search, Cpu, Lock, Palette, Eye, Code2, BarChart3 } from "lucide-react";
 
 const features = [

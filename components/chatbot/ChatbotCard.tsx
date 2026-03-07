@@ -4,37 +4,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import Link from "next/link";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-
-export interface GuardrailRule {
-    id: string;
-    name: string;
-    description: string;
-    enabled: boolean;
-}
-
-export interface Chatbot {
-    id: string;
-    name: string;
-    description: string;
-    avatar?: string;
-    systemPrompt: string;
-    tone: 'professional' | 'friendly' | 'casual' | 'formal';
-    role: string;
-    enableMemory: boolean;
-    guardrails: GuardrailRule[];
-    createdAt: Date;
-    updatedAt: Date;
-    status: 'draft' | 'active' | 'paused';
-    workspaceId: string;
-}
-
-interface ChatbotCardProps {
-    deleteChatbot: any;
-    chatbot: Chatbot;
-    index: number;
-}
+import { ChatbotCardProps } from '@/types';
+import Link from "next/link";
 
 export function ChatbotCard({ deleteChatbot, chatbot, index }: ChatbotCardProps) {
 

@@ -1,4 +1,4 @@
-import AnimatedSection from "./AnimatedSection";
+import AnimatedSection from "@/components/landing/AnimatedSection";
 import { Ban, DollarSign, Paintbrush, ShieldOff } from "lucide-react";
 
 const problems = [
@@ -25,6 +25,7 @@ const problems = [
 ];
 
 const ProblemSection = () => {
+
     return (
         <section className="section-padding relative">
             <div className="absolute inset-0 bg-linear-to-b from-background via-secondary/20 to-background" />
@@ -55,6 +56,7 @@ const ProblemSection = () => {
             </div>
         </section>
     );
+
 };
 
 export default ProblemSection;

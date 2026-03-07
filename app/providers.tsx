@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { ToastContainer } from 'react-toastify';
 import { useState } from "react";
 import { WorkspaceProvider } from "@/store/WorkspaceContext";
+import { AuthProvider } from "@/store/AuthContext";
 
 export function Providers({ children }: { children: React.ReactNode }) {
 
@@ -13,14 +14,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <WorkspaceProvider>
-                <TooltipProvider>
-                    <SessionProvider>
-                        {children}
-                        <ToastContainer />
-                    </SessionProvider>
-                </TooltipProvider>
-            </WorkspaceProvider>
+            <AuthProvider>
+                <WorkspaceProvider>
+                    <TooltipProvider>
+                        <SessionProvider>
+                            {children}
+                            <ToastContainer />
+                        </SessionProvider>
+                    </TooltipProvider>
+                </WorkspaceProvider>
+            </AuthProvider>
         </QueryClientProvider>
     );
 
