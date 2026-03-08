@@ -30,8 +30,7 @@ const AuthPage = () => {
     const handleSubmit = async (e: React.FormEvent) => {
 
         e.preventDefault();
-
-        authState.hasSignUp ? signup(e) : login(e);
+        authState.hasSignUp ? signup() : login();
 
     };
 
@@ -41,7 +40,6 @@ const AuthPage = () => {
             {/* Floating orbs */}
             <motion.div className="pointer-events-none absolute w-[500px] h-[500px] rounded-full blur-3xl" style={{ background: "radial-gradient(circle, hsl(24 95% 53% / 0.18), transparent 70%)", top: "-10%", right: "-5%" }} animate={{ y: [0, 30, 0], x: [0, -15, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} />
             <motion.div className="pointer-events-none absolute w-[400px] h-[400px] rounded-full blur-3xl" style={{ background: "radial-gradient(circle, hsl(30 100% 60% / 0.14), transparent 70%)", bottom: "-10%", left: "-5%" }} animate={{ y: [0, -20, 0], x: [0, 20, 0] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} />
-
             {authState.isVerificationSend ?
                 <motion.div initial={{ opacity: 0, y: 30, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }} className="w-full max-w-md border p-8 rounded-2xl text-center">
                     <h1 className="text-2xl font-bold text-gray-200">Verification link sent! ✅</h1>

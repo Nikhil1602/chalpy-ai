@@ -18,9 +18,9 @@ import { AIModelStep } from '@/components/chatbot/AIModelStep';
 import { SystemPromptStep } from '@/components/chatbot/SystemPromptStep';
 import { useParams, useRouter } from 'next/navigation';
 import { useToast } from '@/hooks';
-import { defaultAIModel, defaultTheme } from '@/lib/constants';
 import SidebarContainer from '@/components/layout/SidebarContainer';
 import Link from 'next/link';
+import { defaultAIModel, defaultTheme } from '@/lib/constants';
 
 const tones = [
   { value: 'professional', label: 'Professional' },

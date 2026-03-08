@@ -30,9 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { showToast } = useToast();
     const router = useRouter();
 
-    const login = async (e: React.FormEvent) => {
-
-        e.preventDefault();
+    const login = async () => {
 
         try {
 
@@ -90,20 +88,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     };
 
-    const signup = async (e: React.FormEvent) => {
-
-        e.preventDefault();
+    const signup = async () => {
 
         try {
 
             const { email, password, name } = user;
             setAuthState({ ...authState, isLoading: true });
-            const resp = await axios.post('/register', { email, password, name });
+            const resp = await axios.post('/api/register', { email, password, name });
             const result = resp.data;
 
             if (!result.ok) {
 
-                const errorData = await result.json();
+                const errorData = result;
 
                 if (errorData?.error === "USER_EXISTS") {
                     showToast("User already exists!", "error");
@@ -125,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setAuthState({ ...authState, isVerificationSend: true });
             setTimeout(() => {
                 setAuthState({ ...authState, hasSignUp: false, isVerificationSend: false });
-            }, 4000);
+            }, 2000);
 
         } catch (error) {
 

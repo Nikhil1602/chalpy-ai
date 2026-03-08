@@ -259,7 +259,6 @@ export function ThemeCustomizer({ theme, onChange, botName }: ThemeCustomizerPro
                             <div className="space-y-2">
                                 <Label>Roundness: {launcher.borderRadius}%</Label>
                                 <div className='h-10 flex'>
-
                                     <Slider value={[launcher.borderRadius]} onValueChange={([v]: any) => onChange({ ...theme, launcher: { ...launcher, borderRadius: v } })} min={0} max={50} step={5} />
                                 </div>
                             </div>
@@ -269,7 +268,7 @@ export function ThemeCustomizer({ theme, onChange, botName }: ThemeCustomizerPro
                             <Label>Icon Style</Label>
                             <div className="flex flex-wrap gap-2">
                                 {launcherIcons.map((item) => (
-                                    <button key={item.value} onClick={() => onChange({ ...theme, launcher: { ...launcher, icon: item.value, logoUrl: '' } })} className={`flex cursor-pointer items-center gap-1.5 px-3 py-2 rounded-lg border text-xs transition-all ${launcher.icon === item.value && !launcher.logoUrl ? 'border-orange-500 bg-orange-500/10 text-orange-500' : 'border-gray-800 text-gray-600 hover:border-gray-600/50'}`}>
+                                    <button key={item.value} onClick={() => onChange({ ...theme, launcher: { ...launcher, icon: item.value, logoUrl: '' } })} className={`flex cursor-pointer items-center gap-1.5 px-3 py-2 rounded-lg border text-xs transition-all ${launcher.icon === item.value && !launcher.logoUrl ? 'border-orange-500 bg-orange-500/10 text-orange-500' : 'border-gray-800 text-gray-500 bg-gray-900 hover:border-gray-500/50'}`}>
                                         {item.icon}
                                         <span className="hidden sm:inline">{item.label}</span>
                                     </button>

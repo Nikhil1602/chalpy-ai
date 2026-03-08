@@ -164,9 +164,9 @@ export interface AuthContextType {
     authState: AuthState;
     handleAuthState: (name: "isLoading" | "hasSignUp" | "isVerificationSend" | "isVerificationResend", value: boolean) => void;
     isAuthenticated: boolean;
-    login: (e: React.FormEvent) => Promise<void>;
+    login: () => Promise<void>;
     logout: () => void;
-    signup: (e: React.FormEvent) => Promise<void>;
+    signup: () => Promise<void>;
     forgotPassword: () => Promise<void>;
     resendVerification: () => Promise<void>;
     handleAuthChange: (e: ChangeEvent<HTMLInputElement>) => void;

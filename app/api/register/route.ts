@@ -9,16 +9,16 @@ export async function POST(req: Request) {
 
     const { name, email, password } = await req.json();
 
+    if (!name || !email || !password) {
+        return NextResponse.json({ ok: false, error: "MISSING_FIELDS" }, { status: 400 });
+    }
+
     const user = await prisma.user.findUnique({
         where: { email: email },
     });
 
     if (user) {
         return NextResponse.json({ ok: false, error: "USER_EXISTS" }, { status: 400 });
-    }
-
-    if (!name || !email || !password) {
-        return NextResponse.json({ ok: false, error: "MISSING_FIELDS" }, { status: 400 });
     }
 
     const hashed = await bcrypt.hash(password, 10);
