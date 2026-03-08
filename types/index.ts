@@ -257,9 +257,25 @@ export interface StatCardProps {
 export interface WorkspaceContextType {
     currentWorkspace: Workspace | null;
     chatbots: Chatbot[];
+    guardrails: GuardrailRule[];
     setCurrentWorkspace: (workspace: Workspace | null) => void;
     addChatbot: (chatbot: Chatbot) => void;
     updateChatbot: (id: string, updates: Partial<Chatbot>) => void;
     deleteChatbot: (id: string) => void;
     getChatbot: (id: string) => Chatbot | undefined;
+    addGuardrail: (rule: Omit<GuardrailRule, 'id' | 'enabled'>) => void;
+    updateGuardrail: (id: string, updates: Partial<GuardrailRule>) => void;
+    deleteGuardrail: (id: string) => void;
+}
+
+export interface KnowledgeFile {
+    id: string;
+    name: string;
+    size: number;
+    type: string;
+}
+
+export interface KnowledgeStepProps {
+    files: KnowledgeFile[];
+    onChange: (files: KnowledgeFile[]) => void;
 }

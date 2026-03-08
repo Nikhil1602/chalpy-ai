@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { Chatbot, Workspace, WorkspaceContextType } from '@/types';
+import { Chatbot, GuardrailRule, Workspace, WorkspaceContextType } from '@/types';
 import { defaultAIModel, defaultTheme } from '@/lib/constants';
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
@@ -24,6 +24,13 @@ const mockWorkspace: Workspace = {
     plan: 'pro',
     createdAt: new Date(),
 };
+
+const defaultGuardrails: GuardrailRule[] = [
+    { id: 'g1', name: 'No harmful content', description: 'Prevents generation of harmful or offensive content', enabled: true },
+    { id: 'g2', name: 'Stay on topic', description: 'Keeps conversations focused on the intended purpose', enabled: true },
+    { id: 'g3', name: 'No personal data collection', description: 'Avoids collecting sensitive personal information', enabled: false },
+    { id: 'g4', name: 'Fact-checking', description: 'Warns users when providing uncertain information', enabled: false },
+];
 
 const mockChatbots: Chatbot[] = [
     {
@@ -67,6 +74,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
     const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(mockWorkspace);
     const [chatbots, setChatbots] = useState<Chatbot[]>(mockChatbots);
+    const [guardrails, setGuardrails] = useState<GuardrailRule[]>(defaultGuardrails);
 
     const addChatbot = (chatbot: Chatbot) => {
         setChatbots(prev => [...prev, chatbot]);
@@ -84,8 +92,20 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         return chatbots.find(bot => bot.id === id);
     };
 
+    const addGuardrail = (rule: Omit<GuardrailRule, 'id' | 'enabled'>) => {
+        setGuardrails(prev => [...prev, { ...rule, id: `g-${Date.now()}`, enabled: true }]);
+    };
+
+    const updateGuardrail = (id: string, updates: Partial<GuardrailRule>) => {
+        setGuardrails(prev => prev.map(r => (r.id === id ? { ...r, ...updates } : r)));
+    };
+
+    const deleteGuardrail = (id: string) => {
+        setGuardrails(prev => prev.filter(r => r.id !== id));
+    };
+
     return (
-        <WorkspaceContext.Provider value={{ currentWorkspace, chatbots, setCurrentWorkspace, addChatbot, updateChatbot, deleteChatbot, getChatbot }}>
+        <WorkspaceContext.Provider value={{ currentWorkspace, chatbots, setCurrentWorkspace, addChatbot, updateChatbot, deleteChatbot, getChatbot, guardrails, addGuardrail, updateGuardrail, deleteGuardrail }}>
             {children}
         </WorkspaceContext.Provider>
     );

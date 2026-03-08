@@ -8,7 +8,6 @@ import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Link from 'next/link';
-import Image from 'next/image';
 
 const aiPlatforms: AIPlatform[] = [
     {
@@ -100,7 +99,7 @@ const aiPlatforms: AIPlatform[] = [
             { value: 'mistral-medium', label: 'Mistral Medium' },
             { value: 'mistral-small', label: 'Mistral Small' },
         ],
-    },
+    }
 ]
 
 export function AIModelStep({ config, onChange }: AIModelStepProps) {
@@ -141,7 +140,7 @@ export function AIModelStep({ config, onChange }: AIModelStepProps) {
                                 {config.model === model.id && (
                                     <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-500" />
                                 )}
-                                <Image src={model.iconSrc} alt={model.name} width={50} height={50} className="w-8 h-8 mb-2" />
+                                <img src={model.iconSrc} alt={model.name} width={50} height={50} className="w-8 h-8 mb-2" />
                                 <p className="font-semibold text-foreground">{model.name}</p>
                                 <span className="text-xs bg-orange-500/50 px-2 py-1 rounded-full text-muted-foreground mt-0.5">{model.provider}</span>
                             </motion.button>

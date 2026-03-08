@@ -100,6 +100,6 @@ export const defaultTheme: ThemeConfig = {
 
 export const defaultAIModel: AIModelConfig = {
   model: 'chatgpt',
-  modelVersion: 'gpt-40',
-  apiKey: '',
+  modelVersion: 'gpt-4o',
+  apiKey: 'cx3xxxx2342S4r',
 };

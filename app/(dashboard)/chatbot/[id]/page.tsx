@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useCallback } from 'react';
-import { ArrowLeft, Save, Bot, MessageSquare, Upload, Code2, Shield, Brain, Palette, ChevronLeft, ChevronRight, Clipboard, Play, FlaskConical } from 'lucide-react';
+import { useState, useCallback, useRef } from 'react';
+import { ArrowLeft, Save, Bot, MessageSquare, Upload, Code2, Shield, Brain, Palette, ChevronLeft, ChevronRight, Clipboard, Play, FlaskConical, Settings, ExternalLink, FileImage, FileText, File, X, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useWorkspace } from '@/store/WorkspaceContext';
-import { Chatbot, GuardrailRule } from '@/types';
+import { Chatbot, GuardrailRule, KnowledgeFile } from '@/types';
 import { motion, AnimatePresence } from 'motion/react';
 import { StepIndicator } from '@/components/chatbot/StepIndicator';
 import { ThemeCustomizer } from '@/components/chatbot/ThemeCustomizer';
@@ -21,6 +21,8 @@ import { useToast } from '@/hooks';
 import SidebarContainer from '@/components/layout/SidebarContainer';
 import Link from 'next/link';
 import { defaultAIModel, defaultTheme } from '@/lib/constants';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const tones = [
   { value: 'professional', label: 'Professional' },
@@ -45,17 +47,41 @@ const steps = [
   { id: 'deploy', label: 'Deploy', icon: <Code2 className="w-4 h-4" /> },
 ];
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+function formatSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function getFileIcon(type: string) {
+  if (type.includes('pdf')) return <FileText className="w-5 h-5 text-red-500" />;
+  if (type.includes('image')) return <FileImage className="w-5 h-5 text-blue-500" />;
+  return <File className="w-5 h-5 text-muted-foreground" />;
+}
+
+function getFileExt(name: string) {
+  return name.split('.').pop()?.toUpperCase() || 'FILE';
+}
+
 export default function ChatbotEditor() {
 
   const { id } = useParams();
   const router = useRouter();
-  const { getChatbot, updateChatbot, addChatbot } = useWorkspace();
+  const { getChatbot, updateChatbot, addChatbot, guardrails } = useWorkspace();
   const isNew = id === 'new';
   const existingBot = !isNew ? getChatbot(id as string ?? null) : null;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set(isNew ? [] : [0, 1, 2, 3, 4, 5]));
+  const [selectedGuardrailIds, setSelectedGuardrailIds] = useState<string[]>(
+    existingBot?.guardrails?.filter(g => g.enabled).map(g => g.id) || []
+  );
+  const [knowledgeFiles, setKnowledgeFiles] = useState<KnowledgeFile[]>([]);
   const { showToast } = useToast();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const [formData, setFormData] = useState<Partial<Chatbot>>({
     name: existingBot?.name || '',
@@ -64,7 +90,7 @@ export default function ChatbotEditor() {
     systemPrompt: existingBot?.systemPrompt || 'You are a helpful AI assistant. Answer questions accurately and helpfully.',
     tone: existingBot?.tone || 'professional',
     enableMemory: existingBot?.enableMemory ?? true,
-    guardrails: existingBot?.guardrails || defaultGuardrails,
+    guardrails: existingBot?.guardrails?.filter(g => g.enabled) || defaultGuardrails,
     status: existingBot?.status || 'draft',
     theme: existingBot?.theme || defaultTheme,
     aiModel: existingBot?.aiModel || defaultAIModel,
@@ -76,6 +102,7 @@ export default function ChatbotEditor() {
 
       case 0:
         if (!formData.name?.trim()) return 'Please provide a name for your chatbot';
+        if (!formData.role?.trim()) return 'Please provide a role for your chatbot';
         return null;
       case 1:
         if (!formData.aiModel?.apiKey?.trim()) return 'Please enter an API key for the selected model';
@@ -155,6 +182,80 @@ export default function ChatbotEditor() {
 
   };
 
+  const toggleGuardrail = (id: string) => {
+    if (selectedGuardrailIds.includes(id)) {
+      setSelectedGuardrailIds(selectedGuardrailIds.filter((gid) => gid !== id));
+    } else {
+      setSelectedGuardrailIds([...selectedGuardrailIds, id]);
+    }
+  };
+
+  const toggleAll = () => {
+    if (selectedGuardrailIds.length === guardrails.length) {
+      setSelectedGuardrailIds([]);
+    } else {
+      setSelectedGuardrailIds(guardrails.map((g) => g.id));
+    }
+  };
+
+  const handleFiles = (fileList: FileList | null) => {
+    if (!fileList) return;
+    const newFiles: KnowledgeFile[] = [];
+    const errors: string[] = [];
+
+    Array.from(fileList).forEach((f) => {
+      if (f.size > MAX_FILE_SIZE) {
+        errors.push(`${f.name} exceeds 10MB limit`);
+        return;
+      }
+      if (knowledgeFiles.some((ef) => ef.name === f.name && ef.size === f.size)) {
+        errors.push(`${f.name} already added`);
+        return;
+      }
+      newFiles.push({
+        id: `file-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        name: f.name,
+        size: f.size,
+        type: f.type,
+      });
+    });
+
+    if (errors.length) showToast(errors.join(', '), "error");
+    if (newFiles.length) {
+      setKnowledgeFiles([...knowledgeFiles, ...newFiles]);
+      showToast(`${newFiles.length} file(s) added`, "success")
+    }
+  };
+
+  const removeFile = (id: string) => {
+    setKnowledgeFiles(knowledgeFiles.filter((f) => f.id !== id));
+    setSelectedIds((prev) => { const n = new Set(prev); n.delete(id); return n; });
+  };
+
+  const removeSelectedFile = () => {
+    setKnowledgeFiles(knowledgeFiles.filter((f) => !selectedIds.has(f.id)));
+    setSelectedIds(new Set());
+    showToast("Files removed", "success");
+  };
+
+  const toggleSelectFile = (id: string) => {
+    setSelectedIds((prev) => {
+      const n = new Set(prev);
+      if (n.has(id)) n.delete(id); else n.add(id);
+      return n;
+    });
+  };
+
+  const toggleAllFiles = () => {
+    if (selectedIds.size === knowledgeFiles.length) setSelectedIds(new Set());
+    else setSelectedIds(new Set(knowledgeFiles.map((f) => f.id)));
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    handleFiles(e.dataTransfer.files);
+  };
+
   return (
     <SidebarContainer>
 
@@ -204,6 +305,7 @@ export default function ChatbotEditor() {
           {currentStep === 0 && (
             <div className="space-y-6">
               <div className="grid gap-6 lg:grid-cols-2">
+
                 <Card>
                   <CardHeader>
                     <CardTitle>Basic Information</CardTitle>
@@ -224,6 +326,7 @@ export default function ChatbotEditor() {
                     </div>
                   </CardContent>
                 </Card>
+
                 <Card>
                   <CardHeader>
                     <CardTitle>Behavior Settings</CardTitle>
@@ -262,6 +365,7 @@ export default function ChatbotEditor() {
                     </div>
                   </CardContent>
                 </Card>
+
               </div>
 
               {/* Theme Customizer */}
@@ -298,30 +402,55 @@ export default function ChatbotEditor() {
           {currentStep === 3 && (
             <Card>
               <CardHeader>
-                <CardTitle>Safety Guardrails</CardTitle>
-                <CardDescription className='text-gray-500'>Enable rules to keep your chatbot safe and on-topic</CardDescription>
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div>
+                    <CardTitle>Safety Guardrails</CardTitle>
+                    <CardDescription className='text-gray-500'>Select guardrails to apply to this chatbot</CardDescription>
+                  </div>
+                  <Link href="/guardrails">
+                    <Button className='bg-orange-600 hover:bg-orange-700 cursor-pointer' size="sm">
+                      <Settings className="w-4 h-4 mr-2" /> Manage Guardrails
+                      <ExternalLink className="w-3 h-3 ml-1.5" />
+                    </Button>
+                  </Link>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                {formData.guardrails?.map((rule) => (
-                  <div key={rule.id} className="flex items-center justify-between p-4 rounded-lg border border-gray-800">
-                    <div className="flex items-center gap-4">
-                      <div className='bg-orange-500/20 w-10 h-10 flex items-center justify-center rounded-full'>
-                        <Shield className="w-5 h-5 text-orange-500" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-white">{rule.name}</p>
-                        <p className="text-sm text-gray-500">{rule.description}</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={rule.enabled}
-                      onCheckedChange={(checked) => {
-                        const updated = formData.guardrails?.map((r) => r.id === rule.id ? { ...r, enabled: checked } : r);
-                        setFormData({ ...formData, guardrails: updated });
-                      }}
-                    />
+
+                {guardrails.length === 0 ? (
+                  <div className="text-center py-10 border rounded-md border-dashed">
+                    <Shield className="w-10 h-10 text-orange-700 mx-auto mb-3" />
+                    <p className="text-gray-500 mb-3">No guardrails available yet.</p>
+                    <Link href="/guardrails">
+                      <Button className='bg-orange-500 hover:bg-orange-700 cursor-pointer' size="sm">Create Guardrails</Button>
+                    </Link>
                   </div>
-                ))}
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between pb-2 border-b border-border">
+                      <span className="text-sm text-gray-500">
+                        {selectedGuardrailIds.length} of {guardrails.length} selected
+                      </span>
+                      <Button className='bg-gray-700 hover:bg-gray-800 cursor-pointer' size="sm" onClick={toggleAll}>
+                        {selectedGuardrailIds.length === guardrails.length ? 'Deselect All' : 'Select All'}
+                      </Button>
+                    </div>
+                    {guardrails.map((rule) => (
+                      <label key={rule.id} className="flex items-center justify-between gap-4 p-4 rounded-lg border cursor-pointer hover:bg-gray-800/50 transition-colors">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className='p-2 bg-orange-500/20 rounded-md'>
+                            <Shield className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-medium text-foreground">{rule.name}</p>
+                            <p className="text-sm text-gray-500">{rule.description}</p>
+                          </div>
+                        </div>
+                        <Switch checked={selectedGuardrailIds.includes(rule.id)} onCheckedChange={() => toggleGuardrail(rule.id)} className="mt-0.5" />
+                      </label>
+                    ))}
+                  </>
+                )}
               </CardContent>
             </Card>
           )}
@@ -329,18 +458,61 @@ export default function ChatbotEditor() {
           {/* Step 4: Knowledge */}
           {currentStep === 4 && (
             <Card>
+
               <CardHeader>
                 <CardTitle>Knowledge Base</CardTitle>
                 <CardDescription className='text-gray-500'>Upload documents to train your chatbot with custom knowledge</CardDescription>
               </CardHeader>
+
               <CardContent>
-                <div className="border-2 border-dashed border-border rounded-xl p-12 text-center">
-                  <Upload className="w-8 h-8 text-gray-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Upload Documents</h3>
-                  <p className="text-gray-500 mb-4">Drag and drop files or click to browse</p>
+
+                {/* Drop zone */}
+                <div className="border-2 border-dashed border-gray-500 rounded-xl p-8 sm:p-12 text-center cursor-pointer hover:border-orange-500/50 hover:bg-gray-800/30 transition-colors" onClick={() => inputRef.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
+                  <Upload className="w-10 h-10 text-gray-500 mx-auto mb-3" />
+                  <h3 className="text-base font-semibold text-foreground mb-1">Upload Documents</h3>
+                  <p className="text-sm text-gray-500 mb-3">Drag and drop files or click to browse</p>
                   <Button className='bg-gray-800 hover:bg-gray-900 cursor-pointer'>Choose Files</Button>
-                  <p className="text-xs text-gray-500 mt-4">Supports PDF, TXT, DOCX up to 10MB</p>
+                  <p className="text-xs text-gray-500 mt-3">Supports PDF, TXT, DOCX, CSV, MD — up to 10MB each</p>
+                  <input ref={inputRef} type="file" multiple className="hidden" accept=".pdf,.txt,.docx,.csv,.md" onChange={(e) => { handleFiles(e.target.files); e.target.value = ''; }} />
                 </div>
+
+                {knowledgeFiles.length > 0 && (
+                  <div className="my-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex h-3 my-3 items-center gap-3">
+                        <Checkbox checked={selectedIds.size === knowledgeFiles.length && knowledgeFiles.length > 0} onCheckedChange={toggleAllFiles} />
+                        <span className="text-sm text-muted-foreground">
+                          {knowledgeFiles.length} file{knowledgeFiles.length !== 1 ? 's' : ''} uploaded
+                          {selectedIds.size > 0 && <span className='text-gray-500'> · {selectedIds.size} selected</span>}
+                        </span>
+                      </div>
+                      {selectedIds.size > 0 && (
+                        <Button className='text-red-500 cursor-pointer hover:bg-red-500/20' size="sm" onClick={removeSelectedFile}>
+                          <Trash2 className="w-full h-full mr-1.5" /> Remove Selected
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="divide-y mt-2 divide-border rounded-lg border overflow-hidden">
+                      {knowledgeFiles.map((file) => (
+                        <div key={file.id} className={`flex items-center gap-3 px-4 py-3 transition-colors ${selectedIds.has(file.id) ? 'bg-orange-500/5' : 'hover:bg-gray-800/40'}`}>
+                          <Checkbox checked={selectedIds.has(file.id)} onCheckedChange={() => toggleSelectFile(file.id)} />
+                          {getFileIcon(file.type)}
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
+                            <p className="text-xs text-gray-500">{formatSize(file.size)}</p>
+                          </div>
+                          <Badge className="text-[10px] bg-gray-700 shrink-0">
+                            {getFileExt(file.name)}
+                          </Badge>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-gray-500 hover:text-red-500 cursor-pointer" onClick={() => removeFile(file.id)}>
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
@@ -357,17 +529,17 @@ export default function ChatbotEditor() {
                   <Label>Embed Script</Label>
                   <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm overflow-x-auto">
                     <code className="text-gray-400">
-                      {`<script src="https://botforge.ai/widget.js" data-bot-id="${id || 'new'}" async></script>`}
+                      {`<script src="https://chalpy.ai/widget.js" data-bot-id="${id || 'new'}" async></script>`}
                     </code>
                   </div>
-                  <Button className="bg-orange-600 hover:bg-orange-800 cursor-pointer" size="sm" onClick={() => { navigator.clipboard.writeText(`<script src="https://botforge.ai/widget.js" data-bot-id="${id || 'new'}" async></script>`); showToast('Copied to clipboard!', 'success'); }}>
+                  <Button className="bg-orange-600 hover:bg-orange-800 cursor-pointer" size="sm" onClick={() => { navigator.clipboard.writeText(`<script src="https://chalpy.ai/widget.js" data-bot-id="${id || 'new'}" async></script>`); showToast('Copied to clipboard!', 'success'); }}>
                     <Clipboard className="w-4 h-4 mr-2" /> Copy to Clipboard
                   </Button>
                 </div>
                 <div className="space-y-2">
                   <Label>Public API Endpoint</Label>
                   <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm">
-                    <code className="text-gray-400">{`https://api.botforge.ai/v1/chat/${id || 'new'}`}</code>
+                    <code className="text-gray-400">{`https://api.chalpy.ai/v1/chat/${id || 'new'}`}</code>
                   </div>
                 </div>
                 <div className="p-4 rounded-lg bg-orange-500/5 border border-orange-500/20">
@@ -406,7 +578,7 @@ export default function ChatbotEditor() {
           </Button>
         ) : (
           <div className='flex gap-3'>
-            <Link href={`/chatbot/playground`}>
+            <Link href={`/chatbot/${id}/playground`}>
               <Button className='bg-gray-800 hover:bg-gray-900 text-white cursor-pointer transition-colors duration-150' onClick={handleSave}>
                 <Play className="w-4 h-4 mr-1" />
                 Playground
@@ -422,3 +594,58 @@ export default function ChatbotEditor() {
     </SidebarContainer>
   );
 }
+
+
+// {
+//   id: `bot-${Date.now()}`,
+//   name: "Support Desk",
+//   description: "Helps qualify leads and answer product questions",
+//   role: 'Customer Support',
+//   systemPrompt: 'You are a helpful customer support agent.',
+//   tone: 'professional',
+//   enableMemory: true,
+//   guardrails: [
+//     {
+//       id: 'guardrail-1',
+//       name: 'No harmful content',
+//       description: 'Prevents harmful responses',
+//       enabled: true
+//     },
+//     {
+//       id: 'guardrail-2',
+//       name: 'Stay on topic',
+//       description: 'Keeps conversations focused',
+//       enabled: true
+//     }
+//   ],
+//   status: 'draft',
+//   workspaceId: 'workspace-123',
+//   createdAt: new Date(),
+//   updatedAt: new Date(),
+//   theme: {
+//     backgroundColor: '#ffffff',
+//     gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+//     gradientFrom: '#667eea',
+//     gradientTo: '#764ba2',
+//     textColor: '#1a1a2e',
+//     borderRadius: 16,
+//     fontFamily: 'Inter',
+//     logoUrl: '',
+//     position: 'bottom-right',
+//     accentColor: '#667eea',
+//     headerColor: '#667eea',
+//     launcher: {
+//       backgroundColor: '#667eea',
+//       borderRadius: 50,
+//       padding: 8,
+//       icon: 'message',
+//       logoUrl: '',
+//       size: 56,
+//     },
+//   },
+//   aiModel: {
+//     model: 'chatgpt',
+//     modelVersion: 'gpt-4o',
+//     apiKey: '23xxx11vd',
+//   }
+// }
