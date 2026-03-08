@@ -3,3 +3,4 @@ export { default as useIsMobile } from "./useIsMobile";
 export { default as useToast } from "./useToast";
 export { default as useOnlineStatus } from "./useOnlineStatus";
 export { default as useChatbot } from "./useChatbot";
+export { default as useKnowledgeBase } from "./useKnowledgeBase";

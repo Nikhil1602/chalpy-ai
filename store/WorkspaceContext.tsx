@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { Chatbot, GuardrailRule, Workspace, WorkspaceContextType } from '@/types';
 import { defaultAIModel, defaultTheme } from '@/lib/constants';
+import { useKnowledgeBase } from '@/hooks';
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
@@ -75,6 +76,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(mockWorkspace);
     const [chatbots, setChatbots] = useState<Chatbot[]>(mockChatbots);
     const [guardrails, setGuardrails] = useState<GuardrailRule[]>(defaultGuardrails);
+    const knowledgeBase = useKnowledgeBase();
 
     const addChatbot = (chatbot: Chatbot) => {
         setChatbots(prev => [...prev, chatbot]);
@@ -105,7 +107,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <WorkspaceContext.Provider value={{ currentWorkspace, chatbots, setCurrentWorkspace, addChatbot, updateChatbot, deleteChatbot, getChatbot, guardrails, addGuardrail, updateGuardrail, deleteGuardrail }}>
+        <WorkspaceContext.Provider value={{ currentWorkspace, chatbots, setCurrentWorkspace, addChatbot, updateChatbot, deleteChatbot, getChatbot, guardrails, addGuardrail, updateGuardrail, deleteGuardrail, ...knowledgeBase }}>
             {children}
         </WorkspaceContext.Provider>
     );

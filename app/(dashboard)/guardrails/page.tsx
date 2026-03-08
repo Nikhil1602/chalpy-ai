@@ -12,7 +12,9 @@ import { useWorkspace } from '@/store/WorkspaceContext';
 import { GuardrailRule } from '@/types';
 import { useToast } from '@/hooks';
 import SidebarContainer from "@/components/layout/SidebarContainer";
-import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/layout/PageHeader';
+import Link from 'next/link';
+import { motion } from "motion/react";
 
 export default function Guardrails() {
 
@@ -23,7 +25,6 @@ export default function Guardrails() {
     const [description, setDescription] = useState('');
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
     const { showToast } = useToast();
-    const router = useRouter();
 
     const openCreate = () => {
 
@@ -70,66 +71,63 @@ export default function Guardrails() {
 
     return (
         <SidebarContainer>
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
-                    <Button onClick={() => router.back()} className='bg-gray-800 cursor-pointer hover:bg-gray-900 text-white' size="icon">
-                        <ArrowLeft className="w-5 h-5" />
-                    </Button>
-                    <div>
-                        <h1 className="text-2xl font-bold text-foreground">Guardrails</h1>
-                        <p className="text-sm text-gray-500">Manage safety rules for your chatbots</p>
-                    </div>
-                </div>
-                <Button onClick={openCreate} className='bg-orange-600 transition-colors duration-150 hover:bg-orange-700 cursor-pointer' size="sm">
-                    <Plus className="w-4 h-4 mr-2" /> Add Guardrail
-                </Button>
-            </div>
 
-            {guardrails.length === 0 ? (
-                <Card>
-                    <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                        <div className='bg-orange-500/20 mb-4 p-2 rounded-lg'>
-                            <Shield className="w-12 h-12 text-orange-500" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-foreground mb-2">No guardrails yet</h3>
-                        <p className="text-gray-500 mb-4">Create your first safety rule to protect your chatbots.</p>
-                        <Button className='bg-orange-500 hover:bg-orange-700 cursor-pointer' onClick={openCreate}><Plus className="w-4 h-4 mr-2" /> Create Guardrail</Button>
-                    </CardContent>
-                </Card>
-            ) : (
-                <div className="grid gap-3">
-                    {guardrails.map((rule) => (
-                        <Card key={rule.id} className="group">
-                            <CardContent className="flex items-center justify-between">
-                                <div className="flex items-center gap-4 min-w-0">
-                                    <div className="shrink-0 w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
-                                        <Shield className="w-5 h-5 text-orange-500" />
-                                    </div>
-                                    <div className="min-w-0">
-                                        <p className="font-medium text-foreground truncate">{rule.name}</p>
-                                        <p className="text-sm text-gray-500 truncate">{rule.description}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2 shrink-0">
-                                    <Button size="icon" onClick={() => openEdit(rule)} className="h-8 w-8 cursor-pointer bg-blue-500/30 transition-colors duration-150 hover:text-blue-500">
-                                        <Pencil className="w-4 h-4" />
-                                    </Button>
-                                    {deleteConfirmId === rule.id ? (
-                                        <div className="flex items-center gap-1">
-                                            <Button className='bg-red-500 cursor-pointer hover:bg-red-600' size="sm" onClick={() => handleDelete(rule.id)}>Delete</Button>
-                                            <Button className='bg-gray-800 cursor-pointer hover:bg-gray-900' size="sm" onClick={() => setDeleteConfirmId(null)}>Cancel</Button>
+            <PageHeader title="Guardrails" description="Manage safety rules for your chatbots">
+                <Link href="/guardrails">
+                    <Button className="bg-orange-500 text-white cursor-pointer hover:bg-orange-600">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Guardrail
+                    </Button>
+                </Link>
+            </PageHeader>
+
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                {guardrails.length === 0 ? (
+                    <Card>
+                        <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                            <div className='bg-orange-500/20 mb-4 p-2 rounded-lg'>
+                                <Shield className="w-12 h-12 text-orange-500" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-foreground mb-2">No guardrails yet</h3>
+                            <p className="text-gray-500 mb-4">Create your first safety rule to protect your chatbots.</p>
+                            <Button className='bg-orange-500 hover:bg-orange-700 cursor-pointer' onClick={openCreate}><Plus className="w-4 h-4 mr-2" /> Create Guardrail</Button>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <div className="grid gap-3">
+                        {guardrails.map((rule) => (
+                            <Card key={rule.id} className="group">
+                                <CardContent className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4 min-w-0">
+                                        <div className="shrink-0 w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
+                                            <Shield className="w-5 h-5 text-orange-500" />
                                         </div>
-                                    ) : (
-                                        <Button variant="ghost" size="icon" onClick={() => setDeleteConfirmId(rule.id)} className="h-8 w-8 hover:text-red-500 text-white cursor-pointer bg-red-500/20">
-                                            <Trash2 className="w-4 h-4" />
+                                        <div className="min-w-0">
+                                            <p className="font-medium text-foreground truncate">{rule.name}</p>
+                                            <p className="text-sm text-gray-500 truncate">{rule.description}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 shrink-0">
+                                        <Button size="icon" onClick={() => openEdit(rule)} className="h-8 w-8 cursor-pointer bg-blue-500/30 transition-colors duration-150 hover:text-blue-500">
+                                            <Pencil className="w-4 h-4" />
                                         </Button>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            )}
+                                        {deleteConfirmId === rule.id ? (
+                                            <div className="flex items-center gap-1">
+                                                <Button className='bg-red-500 cursor-pointer hover:bg-red-600' size="sm" onClick={() => handleDelete(rule.id)}>Delete</Button>
+                                                <Button className='bg-gray-800 cursor-pointer hover:bg-gray-900' size="sm" onClick={() => setDeleteConfirmId(null)}>Cancel</Button>
+                                            </div>
+                                        ) : (
+                                            <Button variant="ghost" size="icon" onClick={() => setDeleteConfirmId(rule.id)} className="h-8 w-8 hover:text-red-500 text-white cursor-pointer bg-red-500/20">
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                )}
+            </motion.div>
 
             {/* Create/Edit Dialog */}
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -153,6 +151,7 @@ export default function Guardrails() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
         </SidebarContainer>
     );
 

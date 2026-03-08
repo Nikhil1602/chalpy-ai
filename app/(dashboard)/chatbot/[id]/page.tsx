@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useCallback, useRef } from 'react';
-import { ArrowLeft, Save, Bot, MessageSquare, Upload, Code2, Shield, Brain, Palette, ChevronLeft, ChevronRight, Clipboard, Play, FlaskConical, Settings, ExternalLink, FileImage, FileText, File, X, Trash2 } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { ArrowLeft, Save, Bot, MessageSquare, Upload, Code2, Shield, Brain, Palette, ChevronLeft, ChevronRight, Clipboard, Play, FlaskConical, Settings, ExternalLink, FileImage, FileText, File, X, Trash2, TriangleAlert, ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -18,11 +18,11 @@ import { AIModelStep } from '@/components/chatbot/AIModelStep';
 import { SystemPromptStep } from '@/components/chatbot/SystemPromptStep';
 import { useParams, useRouter } from 'next/navigation';
 import { useToast } from '@/hooks';
-import SidebarContainer from '@/components/layout/SidebarContainer';
-import Link from 'next/link';
-import { defaultAIModel, defaultTheme } from '@/lib/constants';
+import { defaultAIModel, defaultTheme, formatSize, getFileExt } from '@/lib/constants';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import SidebarContainer from '@/components/layout/SidebarContainer';
+import Link from 'next/link';
 
 const tones = [
   { value: 'professional', label: 'Professional' },
@@ -47,41 +47,30 @@ const steps = [
   { id: 'deploy', label: 'Deploy', icon: <Code2 className="w-4 h-4" /> },
 ];
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-
-function formatSize(bytes: number) {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function getFileIcon(type: string) {
-  if (type.includes('pdf')) return <FileText className="w-5 h-5 text-red-500" />;
-  if (type.includes('image')) return <FileImage className="w-5 h-5 text-blue-500" />;
-  return <File className="w-5 h-5 text-muted-foreground" />;
-}
-
-function getFileExt(name: string) {
-  return name.split('.').pop()?.toUpperCase() || 'FILE';
-}
-
 export default function ChatbotEditor() {
 
   const { id } = useParams();
   const router = useRouter();
-  const { getChatbot, updateChatbot, addChatbot, guardrails } = useWorkspace();
+
+  const { getChatbot, updateChatbot, addChatbot, guardrails, knowledgeFiles, getFileIcon } = useWorkspace();
   const isNew = id === 'new';
   const existingBot = !isNew ? getChatbot(id as string ?? null) : null;
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set(isNew ? [] : [0, 1, 2, 3, 4, 5]));
-  const [selectedGuardrailIds, setSelectedGuardrailIds] = useState<string[]>(
-    existingBot?.guardrails?.filter(g => g.enabled).map(g => g.id) || []
-  );
-  const [knowledgeFiles, setKnowledgeFiles] = useState<KnowledgeFile[]>([]);
-  const { showToast } = useToast();
-  const inputRef = useRef<HTMLInputElement>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set(isNew ? [] : [0, 1, 2, 3, 4, 5]));
+  const [selectedGuardrailIds, setSelectedGuardrailIds] = useState<string[]>(existingBot?.guardrails?.filter(g => g.enabled).map(g => g.id) || []);
+  const { showToast } = useToast();
+
+  const toggleSelectFile = (id: string) => {
+
+    setSelectedIds((prev) => {
+      const n = new Set(prev);
+      if (n.has(id)) n.delete(id); else n.add(id);
+      return n;
+    });
+
+  };
 
   const [formData, setFormData] = useState<Partial<Chatbot>>({
     name: existingBot?.name || '',
@@ -196,64 +185,6 @@ export default function ChatbotEditor() {
     } else {
       setSelectedGuardrailIds(guardrails.map((g) => g.id));
     }
-  };
-
-  const handleFiles = (fileList: FileList | null) => {
-    if (!fileList) return;
-    const newFiles: KnowledgeFile[] = [];
-    const errors: string[] = [];
-
-    Array.from(fileList).forEach((f) => {
-      if (f.size > MAX_FILE_SIZE) {
-        errors.push(`${f.name} exceeds 10MB limit`);
-        return;
-      }
-      if (knowledgeFiles.some((ef) => ef.name === f.name && ef.size === f.size)) {
-        errors.push(`${f.name} already added`);
-        return;
-      }
-      newFiles.push({
-        id: `file-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        name: f.name,
-        size: f.size,
-        type: f.type,
-      });
-    });
-
-    if (errors.length) showToast(errors.join(', '), "error");
-    if (newFiles.length) {
-      setKnowledgeFiles([...knowledgeFiles, ...newFiles]);
-      showToast(`${newFiles.length} file(s) added`, "success")
-    }
-  };
-
-  const removeFile = (id: string) => {
-    setKnowledgeFiles(knowledgeFiles.filter((f) => f.id !== id));
-    setSelectedIds((prev) => { const n = new Set(prev); n.delete(id); return n; });
-  };
-
-  const removeSelectedFile = () => {
-    setKnowledgeFiles(knowledgeFiles.filter((f) => !selectedIds.has(f.id)));
-    setSelectedIds(new Set());
-    showToast("Files removed", "success");
-  };
-
-  const toggleSelectFile = (id: string) => {
-    setSelectedIds((prev) => {
-      const n = new Set(prev);
-      if (n.has(id)) n.delete(id); else n.add(id);
-      return n;
-    });
-  };
-
-  const toggleAllFiles = () => {
-    if (selectedIds.size === knowledgeFiles.length) setSelectedIds(new Set());
-    else setSelectedIds(new Set(knowledgeFiles.map((f) => f.id)));
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    handleFiles(e.dataTransfer.files);
   };
 
   return (
@@ -466,53 +397,31 @@ export default function ChatbotEditor() {
 
               <CardContent>
 
-                {/* Drop zone */}
-                <div className="border-2 border-dashed border-gray-500 rounded-xl p-8 sm:p-12 text-center cursor-pointer hover:border-orange-500/50 hover:bg-gray-800/30 transition-colors" onClick={() => inputRef.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
-                  <Upload className="w-10 h-10 text-gray-500 mx-auto mb-3" />
-                  <h3 className="text-base font-semibold text-foreground mb-1">Upload Documents</h3>
-                  <p className="text-sm text-gray-500 mb-3">Drag and drop files or click to browse</p>
-                  <Button className='bg-gray-800 hover:bg-gray-900 cursor-pointer'>Choose Files</Button>
-                  <p className="text-xs text-gray-500 mt-3">Supports PDF, TXT, DOCX, CSV, MD — up to 10MB each</p>
-                  <input ref={inputRef} type="file" multiple className="hidden" accept=".pdf,.txt,.docx,.csv,.md" onChange={(e) => { handleFiles(e.target.files); e.target.value = ''; }} />
-                </div>
-
-                {knowledgeFiles.length > 0 && (
-                  <div className="my-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex h-3 my-3 items-center gap-3">
-                        <Checkbox checked={selectedIds.size === knowledgeFiles.length && knowledgeFiles.length > 0} onCheckedChange={toggleAllFiles} />
-                        <span className="text-sm text-muted-foreground">
-                          {knowledgeFiles.length} file{knowledgeFiles.length !== 1 ? 's' : ''} uploaded
-                          {selectedIds.size > 0 && <span className='text-gray-500'> · {selectedIds.size} selected</span>}
-                        </span>
-                      </div>
-                      {selectedIds.size > 0 && (
-                        <Button className='text-red-500 cursor-pointer hover:bg-red-500/20' size="sm" onClick={removeSelectedFile}>
-                          <Trash2 className="w-full h-full mr-1.5" /> Remove Selected
-                        </Button>
-                      )}
-                    </div>
-
-                    <div className="divide-y mt-2 divide-border rounded-lg border overflow-hidden">
-                      {knowledgeFiles.map((file) => (
-                        <div key={file.id} className={`flex items-center gap-3 px-4 py-3 transition-colors ${selectedIds.has(file.id) ? 'bg-orange-500/5' : 'hover:bg-gray-800/40'}`}>
-                          <Checkbox checked={selectedIds.has(file.id)} onCheckedChange={() => toggleSelectFile(file.id)} />
-                          {getFileIcon(file.type)}
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
-                            <p className="text-xs text-gray-500">{formatSize(file.size)}</p>
-                          </div>
-                          <Badge className="text-[10px] bg-gray-700 shrink-0">
-                            {getFileExt(file.name)}
-                          </Badge>
-                          <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 text-gray-500 hover:text-red-500 cursor-pointer" onClick={() => removeFile(file.id)}>
-                            <X className="w-4 h-4" />
-                          </Button>
+                {knowledgeFiles.length === 0 ?
+                  <div className="border-2 border-dashed border-gray-500 rounded-xl p-8 sm:p-12 text-center cursor-pointer transition-colors" onClick={() => { }} onDragOver={(e) => e.preventDefault()}>
+                    <TriangleAlert className="w-10 h-10 text-gray-500 mx-auto mb-3" />
+                    <h3 className="text-base font-semibold text-foreground mb-1">No files in knowledge base</h3>
+                    <p className="text-sm text-gray-500 mb-3">kindly add files to knowledge base</p>
+                    <Button onClick={() => router.push("/knowledge-base")} className='bg-orange-500 hover:bg-orange-600 cursor-pointer'>Go to knowledge base <ArrowUpRight /></Button>
+                  </div> :
+                  <div className="divide-y mt-2 divide-border rounded-lg border overflow-hidden">
+                    {knowledgeFiles.map((file) => (
+                      <div key={file.id} className={`flex items-center gap-3 px-4 py-3 transition-colors ${selectedIds.has(file.id) ? 'bg-orange-500/5' : 'hover:bg-gray-800/40'}`}>
+                        <Checkbox checked={selectedIds.has(file.id)} onCheckedChange={() => toggleSelectFile(file.id)} />
+                        {getFileIcon(file.type)}
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
+                          <p className="text-xs text-gray-500">{formatSize(file.size)}</p>
                         </div>
-                      ))}
-                    </div>
+                        <Badge className="text-[10px] bg-gray-700 shrink-0">
+                          {getFileExt(file.name)}
+                        </Badge>
+
+                      </div>
+                    ))}
                   </div>
-                )}
+                }
+
               </CardContent>
             </Card>
           )}
@@ -564,7 +473,7 @@ export default function ChatbotEditor() {
       {/* Navigation Buttons */}
       <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
 
-        <Button className='cursor-pointer' variant="outline" onClick={goPrev} disabled={currentStep === 0}>
+        <Button className='cursor-pointer bg-gray-700 hover:bg-gray-800 text-white' onClick={goPrev} disabled={currentStep === 0}>
           <ChevronLeft className="w-4 h-4 mr-1" /> Previous
         </Button>
 
@@ -573,7 +482,7 @@ export default function ChatbotEditor() {
         </div>
 
         {currentStep < steps.length - 1 ? (
-          <Button className='cursor-pointer' onClick={goNext}>
+          <Button className='cursor-pointer bg-orange-500 hover:bg-orange-700' onClick={goNext}>
             Next <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
         ) : (
@@ -591,6 +500,7 @@ export default function ChatbotEditor() {
           </div>
         )}
       </div>
+
     </SidebarContainer>
   );
 }

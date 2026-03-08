@@ -26,7 +26,7 @@ export function ChatbotCard({ deleteChatbot, chatbot, index }: ChatbotCardProps)
                                 <Bot className="w-6 h-6 text-orange-500" />
                             </div>
                             <div>
-                                <h3 className="font-semibold text-foreground group-hover:text-orange-500 transition-colors">
+                                <h3 className="font-semibold text-foreground transition-colors">
                                     {chatbot.name}
                                 </h3>
                                 <p className="text-sm text-gray-500">{chatbot.role}</p>

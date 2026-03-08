@@ -1,5 +1,5 @@
 import { LucideIcon } from "lucide-react";
-import { ChangeEvent, ReactNode } from "react";
+import { ChangeEvent, ReactNode, Ref, RefObject } from "react";
 
 export type StorageType = 'local' | 'session';
 
@@ -223,6 +223,7 @@ export interface PageHeaderProps {
     description?: string;
     children?: React.ReactNode;
     className?: string;
+    back?: boolean;
 }
 
 export interface ChatInterfaceProps {
@@ -266,6 +267,16 @@ export interface WorkspaceContextType {
     addGuardrail: (rule: Omit<GuardrailRule, 'id' | 'enabled'>) => void;
     updateGuardrail: (id: string, updates: Partial<GuardrailRule>) => void;
     deleteGuardrail: (id: string) => void;
+    knowledgeFiles: KnowledgeFile[];
+    selectedIds: Set<string>;
+    inputRef: RefObject<HTMLInputElement | null>;
+    handleFiles: (files: FileList | null) => void;
+    removeFile: (id: string) => void;
+    removeSelectedFile: () => void;
+    toggleSelectFile: (id: string) => void;
+    toggleAllFiles: () => void;
+    getFileIcon: (type: string) => React.JSX.Element;
+    handleDrop: (e: React.DragEvent) => void;
 }
 
 export interface KnowledgeFile {

@@ -1,7 +1,7 @@
 "use client"
 
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
-import { Settings, LayoutDashboard, Bot, ShieldCheck } from "lucide-react";
+import { Settings, LayoutDashboard, Bot, ShieldCheck, BookOpen } from "lucide-react";
 import { Separator } from '@/components/ui/separator';
 import { usePathname } from 'next/navigation';
 import Link from "next/link";
@@ -17,7 +17,7 @@ export default function AppSidebar() {
         { id: 'menu-item-1', title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
         { id: 'menu-item-2', title: "Chatbot", href: "/chatbot", icon: Bot },
         { id: 'menu-item-3', title: "Guardrails", href: "/guardrails", icon: ShieldCheck },
-        // { id: 'menu-item-4', title: "Customization", href: "/customization", icon: PencilRuler },
+        { id: 'menu-item-4', title: "Knowledge Base", href: "/knowledge-base", icon: BookOpen },
         { id: 'menu-item-5', title: "Settings", href: "/settings", icon: Settings },
     ];
 
