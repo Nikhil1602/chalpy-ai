@@ -2,16 +2,133 @@
 
 import { MAX_FILE_SIZE } from '@/lib/constants';
 import { KnowledgeFile } from '@/types';
-import { Ref, useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { File, FileImage, FileText } from 'lucide-react';
 import useToast from '@/hooks/useToast';
+import axios from 'axios';
 
-const useKnowledgeBase = () => {
+const useKnowledgeBase = (workspaceId: string = "") => {
 
     const [knowledgeFiles, setKnowledgeFiles] = useState<KnowledgeFile[]>([]);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [selectedKnowledgeIds, setSelectedKnowledgeIds] = useState<Set<string>>(new Set());
+    const [showLoader, setShowLoader] = useState<boolean>(false);
+    const [uploadProgress, setUploadProgress] = useState<number>(0);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const { showToast } = useToast();
+
+    const loadFiles = async () => {
+
+        try {
+
+            setShowLoader(true);
+            const resp = await axios.get(`/api/knowledge/files?workspaceId=${workspaceId}`);
+
+            if (!resp.data.success) return;
+
+            setKnowledgeFiles(resp.data.files);
+
+        } catch (error) {
+
+            console.error("Failed to load files", error);
+
+        } finally {
+
+            setShowLoader(false);
+
+        }
+
+    };
+
+    useEffect(() => {
+        workspaceId !== "" && loadFiles();
+    }, []);
+
+    const uploadFiles = async (fileList: FileList) => {
+
+        try {
+
+            const formData = new FormData();
+
+            Array.from(fileList).forEach((file) => {
+                formData.append("files", file);
+            });
+
+            formData.append("workspaceId", workspaceId);
+
+            setShowLoader(true);
+
+            const resp = await axios.post("/api/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                onUploadProgress: (progressEvent) => {
+                    const percent = Math.round(
+                        (progressEvent.loaded * 100) / (progressEvent.total || 1)
+                    );
+                    console.log("Upload progress:", percent);
+                    setUploadProgress(percent);
+                },
+            });
+
+            const result = resp.data;
+
+            if (!result.success) {
+                showToast("Upload failed", "error");
+                return;
+            }
+
+            showToast("Files uploaded successfully", "success");
+
+        } catch (error) {
+
+            console.error("Upload error:", error);
+            showToast("File upload failed", "error");
+
+        } finally {
+
+            setShowLoader(false);
+
+        }
+
+    };
+
+    const deleteFiles = async (id: string | string[]) => {
+
+        const ids = typeof id === "string" ? [id] : id;
+
+        const previousFiles = [...knowledgeFiles];
+
+        try {
+
+            setShowLoader(true);
+
+            const resp = await axios.post("/api/upload/delete", { fileIds: [...ids] });
+
+            if (!resp.data.success) {
+
+                setKnowledgeFiles(previousFiles);
+                showToast("Failed to delete files", "error");
+                return;
+
+            }
+
+            showToast(ids.length === 1 ? "File deleted successfully" : "Files deleted successfully", "success");
+
+        } catch (error) {
+
+            console.error("Delete error:", error);
+
+            setKnowledgeFiles(previousFiles);
+            showToast("File deletion failed", "error");
+
+        } finally {
+
+            setShowLoader(false);
+
+        }
+
+    };
 
     const handleFiles = (fileList: FileList | null) => {
 
@@ -43,23 +160,26 @@ const useKnowledgeBase = () => {
         if (errors.length) showToast(errors.join(', '), "error");
         if (newFiles.length) {
             setKnowledgeFiles([...knowledgeFiles, ...newFiles]);
-            showToast(`${newFiles.length} file(s) added`, "success")
+            // showToast(`${newFiles.length} file(s) added`, "success");
+            uploadFiles(fileList);
         }
 
     };
 
-    const removeFile = (id: string) => {
+    const removeFile = async (id: string) => {
 
+        await deleteFiles(id);
         setKnowledgeFiles(knowledgeFiles.filter((f) => f.id !== id));
         setSelectedIds((prev) => { const n = new Set(prev); n.delete(id); return n; });
 
     };
 
-    const removeSelectedFile = () => {
+    const removeSelectedFile = async () => {
+
+        await deleteFiles(knowledgeFiles.filter((f) => selectedIds.has(f.id)).map((x: any) => x.id));
 
         setKnowledgeFiles(knowledgeFiles.filter((f) => !selectedIds.has(f.id)));
         setSelectedIds(new Set());
-        showToast("Files removed", "success");
 
     };
 
@@ -91,7 +211,17 @@ const useKnowledgeBase = () => {
         handleFiles(e.dataTransfer.files);
     };
 
-    return { knowledgeFiles, inputRef, selectedIds, getFileIcon, handleFiles, handleDrop, removeFile, removeSelectedFile, toggleAllFiles, toggleSelectFile }
+    const toggleSelectKnowledgeFile = (id: string) => {
+
+        setSelectedKnowledgeIds((prev) => {
+            const n = new Set(prev);
+            if (n.has(id)) n.delete(id); else n.add(id);
+            return n;
+        });
+
+    };
+
+    return { knowledgeFiles, inputRef, selectedIds, uploadProgress, showLoader, selectedKnowledgeIds, toggleSelectKnowledgeFile, getFileIcon, handleFiles, handleDrop, removeFile, removeSelectedFile, toggleAllFiles, toggleSelectFile }
 
 }
 

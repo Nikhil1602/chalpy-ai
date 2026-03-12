@@ -99,9 +99,9 @@ export const defaultTheme: ThemeConfig = {
 };
 
 export const defaultAIModel: AIModelConfig = {
-  model: 'chatgpt',
-  modelVersion: 'gpt-4o',
-  apiKey: 'cx3xxxx2342S4r',
+  provider: 'groq',
+  model: 'llama-3.1-8b-instant',
+  apiKey: process.env.GROQ_API_KEY || 'cx3xxxx2342S4r',
 };
 
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB

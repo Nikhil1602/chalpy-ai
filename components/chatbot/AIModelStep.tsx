@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { AIModel, AIPlatform, AIModelStepProps } from '@/types';
+import { AIPlatform, AIModelStepProps, AIProvider } from '@/types';
 import { cn } from '@/lib/utils';
 import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -17,11 +17,9 @@ const aiPlatforms: AIPlatform[] = [
         description: 'GPT-4o, GPT-4.1',
         iconSrc: '/chatgpt-icon.png',
         models: [
-            { value: 'gpt-4o', label: 'GPT-4o' },
-            { value: 'gpt-4.1', label: 'GPT-4.1' },
-            { value: 'gpt-4.1-mini', label: 'GPT-4.1 Mini' },
-            { value: 'gpt-4', label: 'GPT-4' },
-            { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
+            { value: 'gpt-4o', label: 'GPT 4o' },
+            { value: 'gpt-4o-mini', label: 'GPT 4o Mini' },
+            { value: 'gpt-4.1-mini', label: 'GPT 4.1 Mini' }
         ],
     },
     {
@@ -31,10 +29,8 @@ const aiPlatforms: AIPlatform[] = [
         description: 'Gemini 1.5',
         iconSrc: '/google-gemini-icon.png',
         models: [
-            { value: 'gemini-3-deep-think', label: 'Gemini 3 Deep Think' },
-            { value: 'gemini-3-pro', label: 'Gemini 3 Flash' },
-            { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
-            { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+            { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
+            { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' },
             { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash' },
         ],
     },
@@ -45,10 +41,8 @@ const aiPlatforms: AIPlatform[] = [
         description: 'Claude 3.5',
         iconSrc: '/claude-ai-icon.png',
         models: [
-            { value: 'claude-4.5-haiku', label: 'Claude 4.5 Haiku' },
-            { value: 'claude-4.5-opus', label: 'Claude 4.5 Opus' },
-            { value: 'claude-4-sonnet', label: 'Claude 4 Sonnet' },
-            { value: 'claude-3.5-haiku', label: 'Claude 3.5 Haiku' },
+            { value: 'claude-3-haiku', label: 'Claude 3 Haiku' },
+            { value: 'claude-3-sonnet', label: 'Claude 3 Sonnet' },
             { value: 'claude-3-5-sonnet', label: 'Claude 3.5 Sonnet' },
         ],
     },
@@ -59,9 +53,8 @@ const aiPlatforms: AIPlatform[] = [
         description: 'Llama 3',
         iconSrc: '/meta-ai-icon.png',
         models: [
-            { value: 'llama-4-maverick', label: 'Llama 4 Maverick' },
-            { value: 'llama-3.3-70b', label: 'Llama 3.3 70B' },
-            { value: 'llama-3.2-1b', label: 'Llama 3.2 1B' },
+            { value: 'meta-llama/llama-3.1-8b-instruct', label: 'Llama 3.1 8B instruct' },
+            { value: 'meta-llama/llama-3.1-70b-instruct', label: 'Llama 3.1 70B instruct' },
         ],
     },
     {
@@ -71,21 +64,20 @@ const aiPlatforms: AIPlatform[] = [
         description: 'DeepSeek R1, DeepSeek V3',
         iconSrc: '/deepseek-icon.png',
         models: [
-            { value: 'deepseek-r1', label: 'DeepSeek-R1' },
-            { value: 'deepseek-v3', label: 'DeepSeek-V3' },
+            { value: 'deepseek-chat', label: 'DeepSeek Chat' },
+            { value: 'deepseek-coder', label: 'DeepSeek Coder' },
         ],
     },
     {
-        id: 'grok',
-        name: 'Grok',
+        id: 'groq',
+        name: 'Groq',
         provider: 'X AI',
-        description: 'Grok 1.5',
+        description: 'Groq 1.5',
         iconSrc: '/grok-icon.png',
         models: [
-            { value: 'grok-1', label: 'Grok-1' },
-            { value: 'grok-1.5', label: 'Grok-1.5' },
-            { value: 'grok-3', label: 'Grok-3' },
-            { value: 'grok-3-mini', label: 'Grok-3 Mini' },
+            { value: 'llama-3.1-8b-instant', label: 'Llama 3.1 8B instant' },
+            { value: 'llama-3.1-70b-versatile', label: 'Llama 3.1 70B versatile' },
+            { value: 'mixtral-8x7b-32768', label: 'Mixtral 8X7B-32768' },
         ],
     },
     {
@@ -95,9 +87,9 @@ const aiPlatforms: AIPlatform[] = [
         description: 'Mistral Large',
         iconSrc: '/mistral-ai-icon.png',
         models: [
-            { value: 'mistral-large', label: 'Mistral Large' },
-            { value: 'mistral-medium', label: 'Mistral Medium' },
             { value: 'mistral-small', label: 'Mistral Small' },
+            { value: 'mistral-medium', label: 'Mistral Medium' },
+            { value: 'mistral-large', label: 'Mistral Large' },
         ],
     }
 ]
@@ -105,8 +97,8 @@ const aiPlatforms: AIPlatform[] = [
 export function AIModelStep({ config, onChange }: AIModelStepProps) {
 
     const [showKey, setShowKey] = React.useState(false);
-    const [selectedPlatform, setSelectedPlatform] = useState<AIModel>('chatgpt')
-    const [selectedModel, setSelectedModel] = useState<string>('gpt-4o');
+    const [selectedPlatform, setSelectedPlatform] = useState<AIProvider>('groq')
+    const [selectedModel, setSelectedModel] = useState<string>('llama-3.1-8b-instant');
 
     const activePlatform = aiPlatforms.find(p => p.id === selectedPlatform);
 
@@ -186,7 +178,7 @@ export function AIModelStep({ config, onChange }: AIModelStepProps) {
                             {config.model === 'claude' && <span>Get your API key from <Link className='text-blue-500' href="https://platform.claude.com/settings/keys" target="_blank">platform.claude.com</Link></span>}
                             {config.model === 'gemini' && <span>Get your API key from <Link className='text-blue-500' href="https://aistudio.google.com/api-keys" target="_blank">aistudio.google.com</Link></span>}
                             {config.model === 'meta' && <span>Get your API key from <Link className='text-blue-500' href="https://llama.developer.meta.com/docs/api-keys" target="_blank">llama.developer.meta.com</Link></span>}
-                            {config.model === 'grok' && <span>Get your API key from <Link className='text-blue-500' href="https://console.x.ai/" target="_blank">console.x.ai</Link></span>}
+                            {config.model === 'groq' && <span>Get your API key from <Link className='text-blue-500' href="https://console.x.ai/" target="_blank">console.x.ai</Link></span>}
                             {config.model === 'mistral' && <span>Get your API key from <Link className='text-blue-500' href="https://admin.mistral.ai/organization/api-keys" target="_blank">admin.mistral.ai</Link></span>}
                             {config.model === 'deepseek' && <span>Get your API key from <Link className='text-blue-500' href="https://platform.deepseek.com/api_keys" target="_blank">platform.deepseek.com</Link></span>}
                         </p>

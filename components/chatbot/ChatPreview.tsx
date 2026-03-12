@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Send, Bot, X, MessageSquare, Sparkles, Headphones, HelpCircle } from 'lucide-react';
 import { LauncherIcon, ChatPreviewProps } from '@/types';
 import { defaultLauncher } from '@/lib/constants';

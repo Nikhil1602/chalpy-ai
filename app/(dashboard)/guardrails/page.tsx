@@ -7,13 +7,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Shield, Plus, Pencil, Trash2, ArrowLeft } from 'lucide-react';
+import { Shield, Plus, Pencil, Trash2 } from 'lucide-react';
 import { useWorkspace } from '@/store/WorkspaceContext';
 import { GuardrailRule } from '@/types';
 import { useToast } from '@/hooks';
 import SidebarContainer from "@/components/layout/SidebarContainer";
 import { PageHeader } from '@/components/layout/PageHeader';
-import Link from 'next/link';
 import { motion } from "motion/react";
 
 export default function Guardrails() {
@@ -73,15 +72,14 @@ export default function Guardrails() {
         <SidebarContainer>
 
             <PageHeader title="Guardrails" description="Manage safety rules for your chatbots">
-                <Link href="/guardrails">
-                    <Button className="bg-orange-500 text-white cursor-pointer hover:bg-orange-600">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Guardrail
-                    </Button>
-                </Link>
+                <Button onClick={openCreate} className="bg-orange-500 text-white cursor-pointer hover:bg-orange-600">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Guardrail
+                </Button>
             </PageHeader>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+
                 {guardrails.length === 0 ? (
                     <Card>
                         <CardContent className="flex flex-col items-center justify-center py-16 text-center">
@@ -127,6 +125,7 @@ export default function Guardrails() {
                         ))}
                     </div>
                 )}
+
             </motion.div>
 
             {/* Create/Edit Dialog */}

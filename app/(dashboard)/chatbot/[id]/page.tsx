@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { ArrowLeft, Save, Bot, MessageSquare, Upload, Code2, Shield, Brain, Palette, ChevronLeft, ChevronRight, Clipboard, Play, FlaskConical, Settings, ExternalLink, FileImage, FileText, File, X, Trash2, TriangleAlert, ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useWorkspace } from '@/store/WorkspaceContext';
-import { Chatbot, GuardrailRule, KnowledgeFile } from '@/types';
+import { Chatbot, GuardrailRule } from '@/types';
 import { motion, AnimatePresence } from 'motion/react';
 import { StepIndicator } from '@/components/chatbot/StepIndicator';
 import { ThemeCustomizer } from '@/components/chatbot/ThemeCustomizer';
@@ -52,25 +52,19 @@ export default function ChatbotEditor() {
   const { id } = useParams();
   const router = useRouter();
 
-  const { getChatbot, updateChatbot, addChatbot, guardrails, knowledgeFiles, getFileIcon } = useWorkspace();
+  const { getChatbot, updateChatbot, addChatbot, guardrails, knowledgeFiles, getFileIcon, setCurrentChatbotId, selectedKnowledgeIds, toggleSelectKnowledgeFile } = useWorkspace();
   const isNew = id === 'new';
   const existingBot = !isNew ? getChatbot(id as string ?? null) : null;
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set(isNew ? [] : [0, 1, 2, 3, 4, 5]));
   const [selectedGuardrailIds, setSelectedGuardrailIds] = useState<string[]>(existingBot?.guardrails?.filter(g => g.enabled).map(g => g.id) || []);
   const { showToast } = useToast();
 
-  const toggleSelectFile = (id: string) => {
-
-    setSelectedIds((prev) => {
-      const n = new Set(prev);
-      if (n.has(id)) n.delete(id); else n.add(id);
-      return n;
-    });
-
-  };
+  useEffect(() => {
+    id !== "new" && setCurrentChatbotId(id as string);
+    return () => setCurrentChatbotId(null);
+  }, [id]);
 
   const [formData, setFormData] = useState<Partial<Chatbot>>({
     name: existingBot?.name || '',
@@ -94,7 +88,9 @@ export default function ChatbotEditor() {
         if (!formData.role?.trim()) return 'Please provide a role for your chatbot';
         return null;
       case 1:
-        if (!formData.aiModel?.apiKey?.trim()) return 'Please enter an API key for the selected model';
+        if (!formData.aiModel?.provider) return 'Please select an AI provider';
+        if (!formData.aiModel?.model) return 'Please select a model';
+        if (!formData.aiModel?.apiKey?.trim()) return 'Please enter an API key';
         return null;
       case 2:
         if (!formData.systemPrompt?.trim()) return 'Please provide a system prompt';
@@ -137,7 +133,7 @@ export default function ChatbotEditor() {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
 
     if (!formData.name) { showToast('Please provide a name', 'error'); return; }
 
@@ -157,10 +153,25 @@ export default function ChatbotEditor() {
         updatedAt: new Date(),
         theme: formData.theme || defaultTheme,
         aiModel: formData.aiModel || defaultAIModel,
+        knowledgeIds: [...Array.from(selectedKnowledgeIds)]
       };
       addChatbot(newBot);
       showToast('Chatbot created successfully!', 'success');
+      setCurrentChatbotId(newBot.id);
       router.push(`/chatbot/${newBot.id}`);
+
+      const resp = await fetch("/api/chatbots", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newBot)
+      });
+
+      if (!resp.ok) {
+        throw new Error("Failed to save chatbot")
+      }
+
+      const chatbot = await resp.json();
+
 
     } else {
 
@@ -406,8 +417,8 @@ export default function ChatbotEditor() {
                   </div> :
                   <div className="divide-y mt-2 divide-border rounded-lg border overflow-hidden">
                     {knowledgeFiles.map((file) => (
-                      <div key={file.id} className={`flex items-center gap-3 px-4 py-3 transition-colors ${selectedIds.has(file.id) ? 'bg-orange-500/5' : 'hover:bg-gray-800/40'}`}>
-                        <Checkbox checked={selectedIds.has(file.id)} onCheckedChange={() => toggleSelectFile(file.id)} />
+                      <div key={file.id} className={`flex items-center gap-3 px-4 py-3 transition-colors ${selectedKnowledgeIds.has(file.id) ? 'bg-orange-500/5' : 'hover:bg-gray-800/40'}`}>
+                        <Checkbox checked={selectedKnowledgeIds.has(file.id)} onCheckedChange={() => toggleSelectKnowledgeFile(file.id)} />
                         {getFileIcon(file.type)}
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
@@ -508,6 +519,7 @@ export default function ChatbotEditor() {
 
 // {
 //   id: `bot-${Date.now()}`,
+//   workspaceId: "workspace-1",
 //   name: "Support Desk",
 //   description: "Helps qualify leads and answer product questions",
 //   role: 'Customer Support',
@@ -527,6 +539,10 @@ export default function ChatbotEditor() {
 //       description: 'Keeps conversations focused',
 //       enabled: true
 //     }
+//   ],
+//   knowledgeBase: [
+//     "uploaded-file-url-from-supabase",
+//     ...
 //   ],
 //   status: 'draft',
 //   workspaceId: 'workspace-123',

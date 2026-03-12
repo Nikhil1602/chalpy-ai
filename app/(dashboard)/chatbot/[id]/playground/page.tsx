@@ -17,7 +17,7 @@ import SidebarContainer from '@/components/layout/SidebarContainer';
 export default function Playground() {
 
     const { id } = useParams();
-    const { getChatbot } = useWorkspace();
+    const { getChatbot, selectedKnowledgeIds } = useWorkspace();
     const chatbot = getChatbot(id as string ?? '');
     const { messages, isLoading, sendMessage, clearMessages } = useChatbot({ chatbotId: id as string ?? '' });
     const router = useRouter();
@@ -71,11 +71,11 @@ export default function Playground() {
             </div>
 
             {/* Main Content */}
-            <div className="flex-col md:flex-row flex gap-5 min-h-[600px] w-full">
+            <div className="flex-col md:flex-row flex gap-5 h-[600px] w-full">
 
                 {/* Chat Panel */}
                 <Card className='w-full md:w-[60%]'>
-                    <ChatInterface messages={messages} isLoading={isLoading} onSendMessage={sendMessage} placeholder="Type a message to test your chatbot..." showSources={showDevMode} />
+                    <ChatInterface messages={messages} isLoading={isLoading} selectedIds={selectedKnowledgeIds} onSendMessage={sendMessage} placeholder="Type a message to test your chatbot..." showSources={showDevMode} />
                 </Card>
 
                 {/* Developer Panel */}

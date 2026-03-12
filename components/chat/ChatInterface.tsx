@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { ChatInterfaceProps } from '@/types';
+import { MarkdownRenderer } from '../chatbot/MarkdownRenderer';
 
-export function ChatInterface({ messages, isLoading, onSendMessage, placeholder = 'Type your message...', showSources = false }: ChatInterfaceProps) {
+export function ChatInterface({ messages, isLoading, selectedIds, onSendMessage, placeholder = 'Type your message...', showSources = false }: ChatInterfaceProps) {
 
     const [input, setInput] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -23,7 +24,7 @@ export function ChatInterface({ messages, isLoading, onSendMessage, placeholder 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (input.trim() && !isLoading) {
-            onSendMessage(input.trim());
+            onSendMessage(input.trim(), selectedIds);
             setInput('');
         }
     };
@@ -62,9 +63,10 @@ export function ChatInterface({ messages, isLoading, onSendMessage, placeholder 
                                 </div>
                             )}
                             <div className={cn('max-w-[80%] rounded-2xl px-4 py-3', message.role === 'user' ? 'bg-orange-600 text-white rounded-br-md' : 'bg-gray-800 text-foreground rounded-bl-md')}>
-                                <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                                {/* <p className="text-sm leading-relaxed whitespace-pre-wrap">
                                     {message.content}
-                                </p>
+                                </p> */}
+                                <MarkdownRenderer content={message.content} />
                                 {showSources && message.metadata?.sources && message.metadata.sources.length > 0 && (
                                     <div className="mt-2 pt-2 border-t border-gray-500/50">
                                         <p className="text-xs text-gray-400">

@@ -59,3 +59,69 @@ model VerificationToken {
   expires    DateTime
   @@unique([identifier, token])
 }
+
+model KnowledgeFile {
+  id        String   @id @default(cuid())
+  name      String
+  path      String
+  size      Int
+  type      String
+
+  workspaceId String
+
+  status    String   @default("processing") // processing | ready | failed
+
+  createdAt DateTime @default(now())
+
+  chunks Chunk[]
+
+  chatbotLinks ChatbotKnowledge[]
+
+  @@index([workspaceId])
+}
+
+model Chunk {
+  id        String   @id @default(cuid())
+
+  content   String
+
+  embedding Unsupported("vector") // pgvector
+
+  workspaceId String
+
+  fileId    String
+  file      KnowledgeFile @relation(fields: [fileId], references: [id])
+
+  metadata  Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([workspaceId])
+}
+
+model ChatbotKnowledge {
+  id         String @id @default(cuid())
+
+  chatbotId  String
+  fileId     String
+
+  chatbot    Chatbot       @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  file       KnowledgeFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([chatbotId, fileId])
+}
+
+model Chatbot {
+  id          String   @id @default(cuid())
+  name        String
+  workspaceId String
+
+  provider    String
+  model       String
+
+  apiKey      String?
+
+  knowledgeLinks ChatbotKnowledge[]
+
+  createdAt   DateTime @default(now())
+}

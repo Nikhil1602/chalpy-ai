@@ -27,7 +27,7 @@ export default function AppSidebar() {
 
                 <div className="p-2 py-5 flex items-center transition-all">
                     <div className='w-full flex gap-4 items-center'>
-                        <Image src="/logo.png" alt="Chalpy AI Logo" width={30} height={30} />
+                        <img src="/logo.png" alt="Chalpy AI Logo" width={30} height={30} />
                         <span className="text-orange-500 font-medium text-sm group-data-[collapsible=icon]:hidden truncate">
                             Chalpy AI
                         </span>

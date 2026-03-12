@@ -1,5 +1,5 @@
 import { LucideIcon } from "lucide-react";
-import { ChangeEvent, ReactNode, Ref, RefObject } from "react";
+import { ChangeEvent, Dispatch, ReactNode, Ref, RefObject, SetStateAction } from "react";
 
 export type StorageType = 'local' | 'session';
 
@@ -33,12 +33,12 @@ export interface ThemeConfig {
     launcher: LauncherConfig;
 };
 
-export type AIModel = 'chatgpt' | 'claude' | 'meta' | 'grok' | 'mistral' | 'gemini' | 'deepseek';
+export type AIProvider = 'chatgpt' | 'claude' | 'meta' | 'groq' | 'mistral' | 'gemini' | 'deepseek';
 
 export interface AIModelConfig {
-    model: AIModel;
+    provider: AIProvider;
     apiKey: string;
-    modelVersion?: string;
+    model: string;
 };
 
 export type TextModel = {
@@ -47,7 +47,7 @@ export type TextModel = {
 };
 
 export type AIPlatform = {
-    id: AIModel
+    id: AIProvider
     name: string
     provider: string
     description: string
@@ -71,6 +71,7 @@ export interface Chatbot {
     workspaceId: string;
     theme: ThemeConfig;
     aiModel: AIModelConfig;
+    knowledgeIds: string[];
 };
 
 export interface GuardrailRule {
@@ -132,7 +133,7 @@ export interface Workspace {
     slug: string;
     ownerId: string;
     members: WorkspaceMember[];
-    plan: 'free' | 'pro' | 'enterprise';
+    plan?: 'free' | 'pro' | 'enterprise';
     createdAt: Date;
 };
 
@@ -229,14 +230,14 @@ export interface PageHeaderProps {
 export interface ChatInterfaceProps {
     messages: Message[];
     isLoading: boolean;
-    onSendMessage: (message: string) => void;
+    selectedIds: Set<string>;
+    onSendMessage: (message: string, selectedIds: Set<string>) => void;
     placeholder?: string;
     showSources?: boolean;
 }
 
 export interface UseChatbotOptions {
     chatbotId: string;
-    onMessage?: (message: Message) => void;
 }
 
 export interface MetricChartProps {
@@ -261,6 +262,7 @@ export interface WorkspaceContextType {
     guardrails: GuardrailRule[];
     setCurrentWorkspace: (workspace: Workspace | null) => void;
     addChatbot: (chatbot: Chatbot) => void;
+    setCurrentChatbotId: Dispatch<SetStateAction<string | null>>;
     updateChatbot: (id: string, updates: Partial<Chatbot>) => void;
     deleteChatbot: (id: string) => void;
     getChatbot: (id: string) => Chatbot | undefined;
@@ -268,8 +270,12 @@ export interface WorkspaceContextType {
     updateGuardrail: (id: string, updates: Partial<GuardrailRule>) => void;
     deleteGuardrail: (id: string) => void;
     knowledgeFiles: KnowledgeFile[];
+    uploadProgress: number;
     selectedIds: Set<string>;
     inputRef: RefObject<HTMLInputElement | null>;
+    showLoader: boolean;
+    selectedKnowledgeIds: Set<string>;
+    toggleSelectKnowledgeFile: (id: string) => void;
     handleFiles: (files: FileList | null) => void;
     removeFile: (id: string) => void;
     removeSelectedFile: () => void;

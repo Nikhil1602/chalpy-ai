@@ -1,13 +1,15 @@
 import { useState, useCallback } from 'react';
 import { Message, UseChatbotOptions } from '@/types';
+import { useWorkspace } from '@/store/WorkspaceContext';
 
-export default function useChatbot({ chatbotId, onMessage }: UseChatbotOptions) {
+export default function useChatbot({ chatbotId }: UseChatbotOptions) {
 
     const [messages, setMessages] = useState<Message[]>([]);
+    const { currentWorkspace } = useWorkspace();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const sendMessage = useCallback(async (content: string) => {
+    const sendMessage = useCallback(async (content: string, selectedIds: Set<string>) => {
 
         const userMessage: Message = {
             id: `msg-${Date.now()}`,
@@ -22,37 +24,81 @@ export default function useChatbot({ chatbotId, onMessage }: UseChatbotOptions) 
 
         try {
 
-            // Simulate AI response with streaming effect
-            await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: content,
+                    chatbotId,
+                    workspaceId: currentWorkspace?.id,
+                    knowledgeIds: Array.from(selectedIds),
+                    history: messages,
+                })
+            });
 
-            const responses = [
-                "I understand your question. Let me help you with that. Based on the information available, I can provide a detailed response that addresses your concerns.",
-                "That's a great question! Here's what I found in the knowledge base that might help you understand this topic better.",
-                "Thanks for reaching out! I've analyzed your query and here's my recommendation based on best practices and our documentation.",
-                "I'd be happy to assist with that. Let me break this down into clear steps for you to follow.",
-            ];
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || "Request failed");
+            }
+
+            if (!response.body) {
+                throw new Error("No response stream");
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            const assistantId = `msg-${Date.now() + 1}`;
 
             const assistantMessage: Message = {
-                id: `msg-${Date.now() + 1}`,
-                role: 'assistant',
-                content: responses[Math.floor(Math.random() * responses.length)],
+                id: assistantId,
+                role: "assistant",
+                content: "",
                 timestamp: new Date(),
-                metadata: {
-                    sources: ['knowledge-doc-1', 'knowledge-doc-2'],
-                    tokensUsed: Math.floor(Math.random() * 500) + 100,
-                },
-            };
+            }
 
-            setMessages(prev => [...prev, assistantMessage]);
-            onMessage?.(assistantMessage);
+            let created = false;
+
+            while (true) {
+
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value || new Uint8Array());
+
+                if (!created) {
+                    created = true;
+                    setMessages(prev => [...prev, assistantMessage]);
+                }
+
+                assistantMessage.content += chunk;
+
+                setMessages(prev =>
+                    prev.map(msg => msg.id === assistantId ? { ...msg, content: assistantMessage.content } : msg)
+                );
+            }
 
         } catch (err) {
+
+            console.log(err);
+            setMessages(prev => [
+                ...prev,
+                {
+                    id: `msg-${Date.now()}`,
+                    role: "assistant",
+                    content: "Sorry, something went wrong while generating the response.",
+                    timestamp: new Date()
+                }
+            ]);
             setError('Failed to get response. Please try again.');
+
         } finally {
+
             setIsLoading(false);
+
         }
 
-    }, [chatbotId, onMessage]);
+    }, [chatbotId]);
 
     const clearMessages = useCallback(() => {
 

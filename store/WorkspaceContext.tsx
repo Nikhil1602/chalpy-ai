@@ -22,7 +22,6 @@ const mockWorkspace: Workspace = {
             role: 'owner',
         },
     ],
-    plan: 'pro',
     createdAt: new Date(),
 };
 
@@ -52,6 +51,7 @@ const mockChatbots: Chatbot[] = [
         workspaceId: 'workspace-1',
         theme: defaultTheme,
         aiModel: defaultAIModel,
+        knowledgeIds: []
     },
     {
         id: 'bot-2',
@@ -68,6 +68,7 @@ const mockChatbots: Chatbot[] = [
         workspaceId: 'workspace-1',
         theme: defaultTheme,
         aiModel: defaultAIModel,
+        knowledgeIds: []
     },
 ];
 
@@ -75,8 +76,9 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
     const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(mockWorkspace);
     const [chatbots, setChatbots] = useState<Chatbot[]>(mockChatbots);
+    const [currentChatbotId, setCurrentChatbotId] = useState<string | null>(null);
     const [guardrails, setGuardrails] = useState<GuardrailRule[]>(defaultGuardrails);
-    const knowledgeBase = useKnowledgeBase();
+    const knowledgeBase = useKnowledgeBase(currentWorkspace?.id, currentChatbotId || undefined);
 
     const addChatbot = (chatbot: Chatbot) => {
         setChatbots(prev => [...prev, chatbot]);
@@ -107,7 +109,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <WorkspaceContext.Provider value={{ currentWorkspace, chatbots, setCurrentWorkspace, addChatbot, updateChatbot, deleteChatbot, getChatbot, guardrails, addGuardrail, updateGuardrail, deleteGuardrail, ...knowledgeBase }}>
+        <WorkspaceContext.Provider value={{ currentWorkspace, chatbots, setCurrentWorkspace, setCurrentChatbotId, addChatbot, updateChatbot, deleteChatbot, getChatbot, guardrails, addGuardrail, updateGuardrail, deleteGuardrail, ...knowledgeBase }}>
             {children}
         </WorkspaceContext.Provider>
     );
