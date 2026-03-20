@@ -9,7 +9,7 @@ export default function useChatbot({ chatbotId }: UseChatbotOptions) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const sendMessage = useCallback(async (content: string, selectedIds: Set<string>) => {
+    const sendMessage = useCallback(async (content: string, selectedIds: string[]) => {
 
         const userMessage: Message = {
             id: `msg-${Date.now()}`,
@@ -31,7 +31,7 @@ export default function useChatbot({ chatbotId }: UseChatbotOptions) {
                     message: content,
                     chatbotId,
                     workspaceId: currentWorkspace?.id,
-                    knowledgeIds: Array.from(selectedIds),
+                    knowledgeIds: [...selectedIds],
                     history: messages,
                 })
             });

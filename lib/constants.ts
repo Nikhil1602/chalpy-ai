@@ -88,6 +88,7 @@ export const defaultTheme: ThemeConfig = {
   gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   gradientFrom: '#667eea',
   gradientTo: '#764ba2',
+  status: "draft",
   textColor: '#1a1a2e',
   borderRadius: 16,
   fontFamily: 'Inter',

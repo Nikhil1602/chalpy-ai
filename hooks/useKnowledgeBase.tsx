@@ -40,6 +40,33 @@ const useKnowledgeBase = (workspaceId: string = "") => {
 
     };
 
+    const getSelectiveFiles = async (ids: string[]) => {
+
+        try {
+
+            setShowLoader(true);
+            const reqBody = { knowledgeIds: ids }
+            const resp = await axios.post(`/api/knowledge/files?workspaceId=${workspaceId}`, reqBody);
+
+            if (!resp.data.success) return [];
+
+            return resp.data.files;
+
+        } catch (error) {
+
+            console.error("Failed to load files", error);
+
+        } finally {
+
+            setShowLoader(false);
+
+        }
+
+        return [];
+
+
+    };
+
     useEffect(() => {
         workspaceId !== "" && loadFiles();
     }, []);
@@ -78,6 +105,7 @@ const useKnowledgeBase = (workspaceId: string = "") => {
                 return;
             }
 
+            loadFiles();
             showToast("Files uploaded successfully", "success");
 
         } catch (error) {
@@ -221,7 +249,7 @@ const useKnowledgeBase = (workspaceId: string = "") => {
 
     };
 
-    return { knowledgeFiles, inputRef, selectedIds, uploadProgress, showLoader, selectedKnowledgeIds, toggleSelectKnowledgeFile, getFileIcon, handleFiles, handleDrop, removeFile, removeSelectedFile, toggleAllFiles, toggleSelectFile }
+    return { knowledgeFiles, inputRef, selectedIds, uploadProgress, getSelectiveFiles, showLoader, selectedKnowledgeIds, toggleSelectKnowledgeFile, getFileIcon, handleFiles, handleDrop, removeFile, removeSelectedFile, toggleAllFiles, toggleSelectFile }
 
 }
 

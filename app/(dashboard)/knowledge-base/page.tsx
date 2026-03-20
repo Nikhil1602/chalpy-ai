@@ -29,7 +29,7 @@ const KnowledgeBase = () => {
             {/* Drop zone */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
 
-                <div className={`border-2 border-dashed border-gray-500 rounded-xl p-8 sm:p-12 text-center cursor-pointer ${showLoader ? '' : 'hover:border-orange-500/50 hover:bg-gray-800/30'} transition-colors`} onClick={() => inputRef.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
+                <div className={`border-2 border-dashed border-gray-500 rounded-xl p-8 sm:p-12 text-center ${showLoader ? 'cursor-not-allowed' : 'hover:border-orange-500/50 cursor-pointer hover:bg-gray-800/30'} transition-colors`} onClick={() => inputRef.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
                     <Upload className="w-10 h-10 text-gray-500 mx-auto mb-3" />
                     <h3 className="text-base font-semibold text-foreground mb-1">Upload Documents</h3>
                     <p className="text-sm text-gray-500 mb-3">Drag and drop files or click to browse</p>

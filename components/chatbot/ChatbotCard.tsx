@@ -54,8 +54,8 @@ export function ChatbotCard({ deleteChatbot, chatbot, index }: ChatbotCardProps)
                     </p>
 
                     <div className="flex items-center gap-2 mb-4">
-                        <Badge variant="outline" className={cn('capitalize', statusColors[chatbot.status])}>
-                            {chatbot.status}
+                        <Badge variant="outline" className={cn('capitalize', statusColors[chatbot.configuration?.status])}>
+                            {chatbot.configuration?.status}
                         </Badge>
                         <Badge variant="outline" className={cn('capitalize border-orange-500', chatbot.tone === 'professional' ? 'border-blue-500' : chatbot.tone === 'friendly' ? 'border-green-500' : chatbot.tone === 'casual' ? 'border-yellow-500' : 'border-red-500')}>
                             {chatbot.tone}

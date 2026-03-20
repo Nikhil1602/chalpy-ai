@@ -1,6 +1,7 @@
 import { embeddings } from "@/lib/embeddings";
 import { prisma } from "@/lib/prisma";
 import { generateAIResponse } from "@/lib/ai-router";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
@@ -17,10 +18,7 @@ export async function POST(req: Request) {
         }
 
         if (!knowledgeIds || knowledgeIds.length === 0) {
-            return new Response(
-                "No knowledge base selected for this chatbot.",
-                { status: 400 }
-            );
+            return NextResponse.json({ message: "No knowledge base selected for this chatbot." }, { status: 400 });
         }
 
         /*

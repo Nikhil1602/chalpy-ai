@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { motion } from 'motion/react';
-import { ArrowLeft, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, RotateCcw, ChevronDown, ChevronUp, File, TriangleAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChatInterface } from '@/components/chat/ChatInterface';
@@ -17,13 +17,31 @@ import SidebarContainer from '@/components/layout/SidebarContainer';
 export default function Playground() {
 
     const { id } = useParams();
-    const { getChatbot, selectedKnowledgeIds } = useWorkspace();
+    const { getChatbot, getSelectiveFiles } = useWorkspace();
     const chatbot = getChatbot(id as string ?? '');
     const { messages, isLoading, sendMessage, clearMessages } = useChatbot({ chatbotId: id as string ?? '' });
     const router = useRouter();
 
     const [showDevMode, setShowDevMode] = useState(false);
     const [showPrompt, setShowPrompt] = useState(false);
+    const [showPrompt2, setShowPrompt2] = useState(false);
+
+    const [currentKnowledgeBase, setCurrentKnowledgeBase] = useState([]);
+    const [currentKnowledgeIds, setCurrentKnowledgeIds] = useState<string[] | []>([]);
+
+    useEffect(() => {
+
+        const getKnowledgeBases = async () => {
+            const chatbot = getChatbot(id as string);
+            const knowledgeIds = chatbot?.knowledge.filter(x => x.enabled).map(x => x.id) ?? [];
+            const result = await getSelectiveFiles(knowledgeIds);
+            setCurrentKnowledgeBase(result);
+            setCurrentKnowledgeIds(knowledgeIds);
+        }
+
+        getKnowledgeBases();
+
+    }, []);
 
     if (!chatbot) {
         return (
@@ -54,7 +72,7 @@ export default function Playground() {
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-2xl font-bold text-foreground">{chatbot.name}</h1>
-                            <Badge variant="outline" className="capitalize">{chatbot.status}</Badge>
+                            <Badge variant="outline" className="capitalize">{chatbot.configuration?.status}</Badge>
                         </div>
                         <p className="text-gray-500">Playground - Test your chatbot</p>
                     </div>
@@ -75,11 +93,12 @@ export default function Playground() {
 
                 {/* Chat Panel */}
                 <Card className='w-full md:w-[60%]'>
-                    <ChatInterface messages={messages} isLoading={isLoading} selectedIds={selectedKnowledgeIds} onSendMessage={sendMessage} placeholder="Type a message to test your chatbot..." showSources={showDevMode} />
+                    <ChatInterface messages={messages} isLoading={isLoading} selectedIds={currentKnowledgeIds} onSendMessage={sendMessage} placeholder="Type a message to test your chatbot..." showSources={showDevMode} />
                 </Card>
 
                 {/* Developer Panel */}
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4 w-full md:w-[40%]">
+
                     {/* System Prompt */}
                     <Card>
                         <CardHeader className="cursor-pointer" onClick={() => setShowPrompt(!showPrompt)}>
@@ -97,6 +116,39 @@ export default function Playground() {
                                 <div className="bg-gray-800 selection:bg-orange-600 selection:text-white rounded-lg p-3 text-sm text-gray-400 font-mono max-h-[200px] overflow-y-auto">
                                     {chatbot.systemPrompt}
                                 </div>
+                            </CardContent>
+                        )}
+                    </Card>
+
+                    {/* Knowledge Base */}
+                    <Card>
+                        <CardHeader className="cursor-pointer" onClick={() => setShowPrompt2(!showPrompt2)}>
+                            <div className="flex items-center justify-between">
+                                <CardTitle className="text-base">Knowledge Base</CardTitle>
+                                {showPrompt2 ? (
+                                    <ChevronUp className="w-5 h-5 text-gray-500" />
+                                ) : (
+                                    <ChevronDown className="w-5 h-5 text-gray-500" />
+                                )}
+                            </div>
+                        </CardHeader>
+                        {showPrompt2 && (
+                            <CardContent className='max-h-[150px] hide-scrollbar overflow-y-scroll'>
+                                {currentKnowledgeBase.length === 0 ?
+
+                                    <div className='bg-gray-800 p-3 rounded-sm text-gray-400'>
+                                        <div className='flex flex-col items-center justify-center text-sm'>
+                                            <TriangleAlert className='mb-2' />
+                                            No file/s found!
+                                        </div>
+                                    </div> :
+                                    currentKnowledgeBase.map((x: any) => (
+                                        <div key={x.id} className='flex gap-2 items-center bg-gray-800 p-2 rounded-sm mb-1'>
+                                            <File size={16} className='text-gray-500' />
+                                            <p className='text-xs text-gray-300'>{x.name}</p>
+                                        </div>
+                                    ))
+                                }
                             </CardContent>
                         )}
                     </Card>
@@ -144,6 +196,7 @@ export default function Playground() {
                             </CardContent>
                         </Card>
                     )}
+
                 </motion.div>
 
             </div>

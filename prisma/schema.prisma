@@ -80,6 +80,17 @@ model KnowledgeFile {
   @@index([workspaceId])
 }
 
+model Guardrail {
+  id        String   @id @default(cuid())
+  name      String
+  description   String?
+
+  workspaceId String
+
+  createdAt DateTime @default(now())
+  chatbotLinks ChatbotGuardrail[]
+}
+
 model Chunk {
   id        String   @id @default(cuid())
 
@@ -111,17 +122,84 @@ model ChatbotKnowledge {
   @@unique([chatbotId, fileId])
 }
 
+model LauncherConfig {
+  id              String   @id @default(cuid())
+
+  backgroundColor String?  @default("#667eea")
+  borderRadius    Int?     @default(50)
+  padding         Int?     @default(8)
+
+  icon            String?  @default("message")
+  logoUrl         String?
+
+  size            Int?     @default(56)
+
+  configurationId String   @unique
+  configuration   Configuration @relation(fields: [configurationId], references: [id])
+}
+
+model Configuration {
+  id              String   @id @default(cuid())
+
+  systemPrompt    String?
+  status          String   @default("draft")
+
+  backgroundColor String?  @default("#ffffff")
+  gradient        String?  @default("linear-gradient(135deg, #667eea 0%, #764ba2 100%)")
+  gradientFrom    String?  @default("#667eea")
+  gradientTo      String?  @default("#764ba2")
+
+  textColor       String?  @default("#1a1a2e")
+
+  borderRadius    Int?    @default(16)
+  fontFamily      String? @default("inter")
+
+  logoUrl         String?
+
+  position        String? @default("bottom-right")
+
+  accentColor     String? @default("#667eea")
+  headerColor     String? @default("#667eea")
+
+  chatbot         Chatbot?
+
+  launcher        LauncherConfig?
+
+  createdAt       DateTime @default(now())
+}
+
 model Chatbot {
-  id          String   @id @default(cuid())
-  name        String
-  workspaceId String
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  role          String
+  systemPrompt  String?
+  tone          String  @default("professional")
+  enableMemory  Boolean @default(false)
 
-  provider    String
-  model       String
+  workspaceId   String
 
-  apiKey      String?
+  provider      String
+  model         String
+  apiKey        String?
+
+  configurationId String? @unique
+  configuration   Configuration? @relation(fields: [configurationId], references: [id])
 
   knowledgeLinks ChatbotKnowledge[]
+  guardrailLinks ChatbotGuardrail[]
 
-  createdAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
+}
+
+model ChatbotGuardrail {
+  id          String   @id @default(cuid())
+
+  chatbotId   String
+  guardrailId String
+
+  chatbot     Chatbot  @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  guardrail   Guardrail @relation(fields: [guardrailId], references: [id], onDelete: Cascade)
+
+  @@unique([chatbotId, guardrailId])
 }

@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useWorkspace } from '@/store/WorkspaceContext';
-import { Chatbot, GuardrailRule } from '@/types';
+import { Chatbot, GuardrailRule, statusType, ThemeConfig } from '@/types';
 import { motion, AnimatePresence } from 'motion/react';
 import { StepIndicator } from '@/components/chatbot/StepIndicator';
 import { ThemeCustomizer } from '@/components/chatbot/ThemeCustomizer';
@@ -52,21 +52,42 @@ export default function ChatbotEditor() {
   const { id } = useParams();
   const router = useRouter();
 
-  const { getChatbot, updateChatbot, addChatbot, guardrails, knowledgeFiles, getFileIcon, setCurrentChatbotId, selectedKnowledgeIds, toggleSelectKnowledgeFile } = useWorkspace();
+  const { getChatbot, getAllChatbots, updateChatbot, addChatbot, guardrails, knowledgeFiles, getFileIcon } = useWorkspace();
   const isNew = id === 'new';
-  const existingBot = !isNew ? getChatbot(id as string ?? null) : null;
 
+  const existingBot = !isNew ? getChatbot(id as string ?? null) : null;
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set(isNew ? [] : [0, 1, 2, 3, 4, 5]));
   const [selectedGuardrailIds, setSelectedGuardrailIds] = useState<string[]>(existingBot?.guardrails?.filter(g => g.enabled).map(g => g.id) || []);
+  const [selectedKnowledgeIds, setSelectedKnowledgeIds] = useState<Set<string>>(new Set(existingBot?.knowledge?.filter(k => k.enabled).map(k => k.id) || []));
   const { showToast } = useToast();
 
   useEffect(() => {
-    id !== "new" && setCurrentChatbotId(id as string);
-    return () => setCurrentChatbotId(null);
-  }, [id]);
+
+    if (!existingBot) return;
+
+    setSelectedGuardrailIds(existingBot.guardrails?.filter(g => g.enabled).map(g => g.id) || []);
+
+    setSelectedKnowledgeIds(new Set(existingBot.knowledge?.filter(k => k.enabled).map(k => k.id) || []));
+
+    setFormData({
+      id: existingBot.id,
+      name: existingBot.name,
+      description: existingBot.description,
+      role: existingBot.role,
+      systemPrompt: existingBot.systemPrompt,
+      tone: existingBot.tone,
+      enableMemory: existingBot.enableMemory,
+      guardrails: existingBot.guardrails.filter(g => g.enabled),
+      knowledge: existingBot.knowledge.filter(g => g.enabled),
+      configuration: existingBot.configuration,
+      aiModel: existingBot.aiModel,
+    });
+
+  }, [existingBot]);
 
   const [formData, setFormData] = useState<Partial<Chatbot>>({
+    id: existingBot?.id || "",
     name: existingBot?.name || '',
     description: existingBot?.description || '',
     role: existingBot?.role || '',
@@ -74,8 +95,8 @@ export default function ChatbotEditor() {
     tone: existingBot?.tone || 'professional',
     enableMemory: existingBot?.enableMemory ?? true,
     guardrails: existingBot?.guardrails?.filter(g => g.enabled) || defaultGuardrails,
-    status: existingBot?.status || 'draft',
-    theme: existingBot?.theme || defaultTheme,
+    knowledge: existingBot?.knowledge?.filter(g => g.enabled) || [],
+    configuration: existingBot?.configuration || defaultTheme,
     aiModel: existingBot?.aiModel || defaultAIModel,
   });
 
@@ -129,8 +150,8 @@ export default function ChatbotEditor() {
         setCompletedSteps(prev => new Set([...prev, currentStep]));
       }
       setCurrentStep(index);
-
     }
+
   };
 
   const handleSave = async () => {
@@ -138,47 +159,33 @@ export default function ChatbotEditor() {
     if (!formData.name) { showToast('Please provide a name', 'error'); return; }
 
     if (isNew) {
-      const newBot: Chatbot = {
-        id: `bot-${Date.now()}`,
-        name: formData.name!,
+
+      const newBot: any = {
+        name: formData.name,
         description: formData.description || '',
         role: formData.role || 'Assistant',
         systemPrompt: formData.systemPrompt || '',
         tone: formData.tone || 'professional',
         enableMemory: formData.enableMemory ?? true,
-        guardrails: formData.guardrails || [],
-        status: 'draft',
+        guardrailIds: selectedGuardrailIds || [],
         workspaceId: 'workspace-1',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        theme: formData.theme || defaultTheme,
+        configuration: formData.configuration as ThemeConfig,
         aiModel: formData.aiModel || defaultAIModel,
-        knowledgeIds: [...Array.from(selectedKnowledgeIds)]
+        knowledgeIds: Array.from(selectedKnowledgeIds)
       };
+
       addChatbot(newBot);
       showToast('Chatbot created successfully!', 'success');
-      setCurrentChatbotId(newBot.id);
-      router.push(`/chatbot/${newBot.id}`);
-
-      const resp = await fetch("/api/chatbots", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newBot)
-      });
-
-      if (!resp.ok) {
-        throw new Error("Failed to save chatbot")
-      }
-
-      const chatbot = await resp.json();
-
 
     } else {
 
-      updateChatbot(id as string ?? null, formData);
+      updateChatbot(id as string ?? null, formData, selectedGuardrailIds, selectedKnowledgeIds);
       showToast('Changes saved successfully!', 'success');
 
     }
+
+    await getAllChatbots();
+    router.push(`/chatbot`);
 
   };
 
@@ -196,6 +203,19 @@ export default function ChatbotEditor() {
     } else {
       setSelectedGuardrailIds(guardrails.map((g) => g.id));
     }
+  };
+
+  const toggleSelectKnowledgeFile = (id: string) => {
+
+    setSelectedKnowledgeIds(prev => {
+      const next = new Set(prev);
+
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+
+      return next;
+    });
+
   };
 
   return (
@@ -296,7 +316,7 @@ export default function ChatbotEditor() {
                         <Label>Status</Label>
                         <p className="text-sm text-gray-500">Make this chatbot active</p>
                       </div>
-                      <Select value={formData.status} onValueChange={(v: Chatbot['status']) => setFormData({ ...formData, status: v })}>
+                      <Select value={formData?.configuration?.status} onValueChange={(v: statusType) => setFormData({ ...formData, configuration: { ...formData.configuration, status: v } as ThemeConfig })}>
                         <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="draft">Draft</SelectItem>
@@ -316,8 +336,8 @@ export default function ChatbotEditor() {
                   <Palette className="w-5 h-5 text-orange-500" /> Theme & Appearance
                 </h2>
                 <ThemeCustomizer
-                  theme={formData.theme || defaultTheme}
-                  onChange={(theme: any) => setFormData({ ...formData, theme })}
+                  theme={formData.configuration || defaultTheme}
+                  onChange={(theme: any) => setFormData({ ...formData, configuration: theme })}
                   botName={formData.name || ''}
                 />
               </div>
@@ -349,7 +369,7 @@ export default function ChatbotEditor() {
                     <CardTitle>Safety Guardrails</CardTitle>
                     <CardDescription className='text-gray-500'>Select guardrails to apply to this chatbot</CardDescription>
                   </div>
-                  <Link href="/guardrails">
+                  <Link href="/guardrails?add=true">
                     <Button className='bg-orange-600 hover:bg-orange-700 cursor-pointer' size="sm">
                       <Settings className="w-4 h-4 mr-2" /> Manage Guardrails
                       <ExternalLink className="w-3 h-3 ml-1.5" />
@@ -417,8 +437,8 @@ export default function ChatbotEditor() {
                   </div> :
                   <div className="divide-y mt-2 divide-border rounded-lg border overflow-hidden">
                     {knowledgeFiles.map((file) => (
-                      <div key={file.id} className={`flex items-center gap-3 px-4 py-3 transition-colors ${selectedKnowledgeIds.has(file.id) ? 'bg-orange-500/5' : 'hover:bg-gray-800/40'}`}>
-                        <Checkbox checked={selectedKnowledgeIds.has(file.id)} onCheckedChange={() => toggleSelectKnowledgeFile(file.id)} />
+                      <div key={file.id} className={`flex items-center gap-3 px-4 py-3 transition-colors ${selectedKnowledgeIds.has(file.id || "") ? 'bg-orange-500/5' : 'hover:bg-gray-800/40'}`}>
+                        <Checkbox checked={selectedKnowledgeIds.has(file.id || "")} onCheckedChange={() => toggleSelectKnowledgeFile(file.id)} />
                         {getFileIcon(file.type)}
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
@@ -499,7 +519,7 @@ export default function ChatbotEditor() {
         ) : (
           <div className='flex gap-3'>
             <Link href={`/chatbot/${id}/playground`}>
-              <Button className='bg-gray-800 hover:bg-gray-900 text-white cursor-pointer transition-colors duration-150' onClick={handleSave}>
+              <Button className='bg-gray-800 hover:bg-gray-900 text-white cursor-pointer transition-colors duration-150'>
                 <Play className="w-4 h-4 mr-1" />
                 Playground
               </Button>

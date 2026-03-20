@@ -38,7 +38,7 @@ const Footer = () => {
                                 <span className="text-lg font-bold text-orange-500">⚡</span>
                             </div>
                             <span className="text-lg font-bold text-foreground">ChatForge</span> */}
-                            <Image src="/logo.png" alt="Chalpy AI Logo" width={45} height={45} />
+                            <img src="/logo.png" alt="Chalpy AI Logo" width={45} height={45} />
                         </div>
                         <p className="text-sm text-gray-500 leading-relaxed">
                             Build branded AI chatbots trained on your data — powered by your AI models.

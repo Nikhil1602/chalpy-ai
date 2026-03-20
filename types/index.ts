@@ -18,12 +18,15 @@ export interface LauncherConfig {
     size: number;
 };
 
+export type statusType = 'draft' | 'active' | 'paused';
+
 export interface ThemeConfig {
     backgroundColor: string;
     gradient: string;
     gradientFrom: string;
     gradientTo: string;
     textColor: string;
+    status: statusType;
     borderRadius: number;
     fontFamily: FontFamily;
     logoUrl: string;
@@ -64,12 +67,11 @@ export interface Chatbot {
     tone: 'professional' | 'friendly' | 'casual' | 'formal';
     role: string;
     enableMemory: boolean;
-    guardrails: GuardrailRule[];
-    createdAt: Date;
-    updatedAt: Date;
-    status: 'draft' | 'active' | 'paused';
+    guardrails: any[];
+    guardrailIds?: string[];
+    knowledge: any[];
     workspaceId: string;
-    theme: ThemeConfig;
+    configuration: ThemeConfig;
     aiModel: AIModelConfig;
     knowledgeIds: string[];
 };
@@ -230,8 +232,8 @@ export interface PageHeaderProps {
 export interface ChatInterfaceProps {
     messages: Message[];
     isLoading: boolean;
-    selectedIds: Set<string>;
-    onSendMessage: (message: string, selectedIds: Set<string>) => void;
+    selectedIds: string[];
+    onSendMessage: (message: string, selectedIds: string[]) => void;
     placeholder?: string;
     showSources?: boolean;
 }
@@ -259,11 +261,13 @@ export interface StatCardProps {
 export interface WorkspaceContextType {
     currentWorkspace: Workspace | null;
     chatbots: Chatbot[];
+    isChatbotsLoading: Boolean;
+    isGuardrailLoading: Boolean;
     guardrails: GuardrailRule[];
     setCurrentWorkspace: (workspace: Workspace | null) => void;
-    addChatbot: (chatbot: Chatbot) => void;
-    setCurrentChatbotId: Dispatch<SetStateAction<string | null>>;
-    updateChatbot: (id: string, updates: Partial<Chatbot>) => void;
+    addChatbot: (chatbot: Chatbot) => any;
+    getAllChatbots: () => void;
+    updateChatbot: (id: string, updates: Partial<Chatbot>, selectedGuardrailIds: string[], selectedKnowledgeIds: Set<string>) => void;
     deleteChatbot: (id: string) => void;
     getChatbot: (id: string) => Chatbot | undefined;
     addGuardrail: (rule: Omit<GuardrailRule, 'id' | 'enabled'>) => void;
@@ -283,6 +287,7 @@ export interface WorkspaceContextType {
     toggleAllFiles: () => void;
     getFileIcon: (type: string) => React.JSX.Element;
     handleDrop: (e: React.DragEvent) => void;
+    getSelectiveFiles: (ids: string[]) => Promise<any>;
 }
 
 export interface KnowledgeFile {

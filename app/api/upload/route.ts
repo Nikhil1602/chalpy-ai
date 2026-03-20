@@ -60,9 +60,7 @@ export async function POST(req: Request) {
               This runs extraction -> chunking -> embeddings -> vector storage
             */
 
-            console.log("====================> ", savedFile);
-
-            await fetch(`http://localhost:3000/api/index-document`, {
+            await fetch(`${process.env.NEXTAUTH_URL}/api/index-document`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

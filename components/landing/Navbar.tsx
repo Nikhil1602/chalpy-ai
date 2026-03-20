@@ -38,7 +38,7 @@ const Navbar = () => {
                     <Link href="#demo" className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors  border border-gray-700 hover:bg-gray-800 hover:border-gray-500 glow-sm">
                         View Demo
                     </Link>
-                    <Link href="/auth" className="rounded-lg bg-orange-500 hover:bg-orange-600 px-4 py-2 text-sm text-primary-foreground transition-all glow-sm">
+                    <Link href="/dashboard" className="rounded-lg bg-orange-500 hover:bg-orange-600 px-4 py-2 text-sm text-primary-foreground transition-all glow-sm">
                         Get Started Free
                     </Link>
                 </div>
