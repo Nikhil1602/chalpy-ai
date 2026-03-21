@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { generateAIResponse } from "@/lib/ai-router";
 import { NextResponse } from "next/server";
 import { ChatHandlePropTypes, Tone } from "@/types";
-import { ALLOWED_TONES } from "./constants";
+import { ALLOWED_TONES } from "@/lib/constants";
 
 function estimateTokens(text: string) {
     return Math.ceil(text.length / 4);

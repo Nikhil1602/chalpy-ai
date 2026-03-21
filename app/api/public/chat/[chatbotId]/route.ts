@@ -1,5 +1,6 @@
-import { handleChat, Tone } from "@/lib/chat-handler";
+import { handleChat } from "@/lib/chat-handler";
 import { prisma } from "@/lib/prisma";
+import { Tone } from "@/types";
 
 export async function POST(req: Request) {
 

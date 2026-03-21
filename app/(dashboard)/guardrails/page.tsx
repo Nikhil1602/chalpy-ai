@@ -14,12 +14,8 @@ import { useToast } from '@/hooks';
 import { SidebarContainer, PageHeader } from '@/components/layout';
 import { motion } from "motion/react";
 import { Skeleton } from '@/components/ui/skeleton';
-import { useSearchParams } from 'next/navigation';
 
 export default function Guardrails() {
-
-    const searchParams = useSearchParams();
-    const addGuardrails = searchParams.get("add");
 
     const { guardrails, addGuardrail, updateGuardrail, deleteGuardrail, isGuardrailLoading } = useWorkspace();
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -75,7 +71,7 @@ export default function Guardrails() {
     return (
         <SidebarContainer>
 
-            <PageHeader back={!!addGuardrails} title="Guardrails" description="Manage safety rules for your chatbots">
+            <PageHeader title="Guardrails" description="Manage safety rules for your chatbots">
                 <Button disabled={isGuardrailLoading as boolean} onClick={openCreate} className={`${isGuardrailLoading ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-orange-600"} bg-orange-500 text-white`}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add Guardrail

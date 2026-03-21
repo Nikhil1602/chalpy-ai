@@ -1,4 +1,4 @@
-import pdf from "pdf-parse-new"
+import PDFParser from "pdf2json";
 import mammoth from "mammoth"
 import { parse } from "csv-parse/sync"
 
@@ -12,8 +12,17 @@ export async function extractText(file: File) {
     const buffer = Buffer.from(await file.arrayBuffer());
 
     if (file.type === "application/pdf") {
-        const data = await pdf(buffer);
-        return data.text;
+        return new Promise((resolve, reject) => {
+            const pdfParser = new PDFParser();
+            pdfParser.on("pdfParser_dataError", reject);
+            pdfParser.on("pdfParser_dataReady", (pdfData) => {
+                const text = pdfData.Pages.map(page =>
+                    page.Texts.join(" ")
+                ).join("\n");
+                resolve(text);
+            });
+            pdfParser.parseBuffer(buffer);
+        });
     }
 
     if (file.type === DOCX_FILE) {

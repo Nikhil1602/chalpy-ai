@@ -1,4 +1,3 @@
-// embeddings.ts
 import { HuggingFaceInferenceEmbeddings } from "@langchain/community/embeddings/hf"
 
 export const embeddings = new HuggingFaceInferenceEmbeddings({

@@ -243,7 +243,7 @@ export default function ChatbotEditor() {
                       <CardTitle>Safety Guardrails</CardTitle>
                       <CardDescription className='text-gray-500'>Select guardrails to apply to this chatbot</CardDescription>
                     </div>
-                    <Link href="/guardrails?add=true">
+                    <Link href="/guardrails">
                       <Button className='bg-orange-600 hover:bg-orange-700 cursor-pointer' size="sm">
                         <Settings className="w-4 h-4 mr-2" /> Manage Guardrails
                         <ExternalLink className="w-3 h-3 ml-1.5" />
