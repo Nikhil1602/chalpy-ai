@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { ChatInterfaceProps } from '@/types';
 import { MarkdownRenderer } from '../chatbot/MarkdownRenderer';
 
-export function ChatInterface({ messages, isLoading, selectedIds, onSendMessage, placeholder = 'Type your message...', showSources = false }: ChatInterfaceProps) {
+export function ChatInterface({ messages, chatbot, isLoading, selectedIds, onSendMessage, placeholder = 'Type your message...', showSources = false }: ChatInterfaceProps) {
 
     const [input, setInput] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -24,7 +24,7 @@ export function ChatInterface({ messages, isLoading, selectedIds, onSendMessage,
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (input.trim() && !isLoading) {
-            onSendMessage(input.trim(), selectedIds);
+            onSendMessage(input.trim(), selectedIds, chatbot?.tone, chatbot?.enableMemory);
             setInput('');
         }
     };
@@ -67,7 +67,7 @@ export function ChatInterface({ messages, isLoading, selectedIds, onSendMessage,
                                     {message.content}
                                 </p> */}
                                 <MarkdownRenderer content={message.content} />
-                                {showSources && message.metadata?.sources && message.metadata.sources.length > 0 && (
+                                {/* {showSources && message.metadata?.sources && message.metadata.sources.length > 0 && (
                                     <div className="mt-2 pt-2 border-t border-gray-500/50">
                                         <p className="text-xs text-gray-400">
                                             Sources:
@@ -76,7 +76,7 @@ export function ChatInterface({ messages, isLoading, selectedIds, onSendMessage,
                                             })}
                                         </p>
                                     </div>
-                                )}
+                                )} */}
                             </div>
                             {message.role === 'user' && (
                                 <div className="w-8 h-8 rounded-lg bg-gray-400/20 flex items-center justify-center shrink-0">

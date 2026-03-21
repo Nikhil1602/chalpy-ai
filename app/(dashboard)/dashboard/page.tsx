@@ -1,9 +1,8 @@
 "use client"
 
-import { MetricChart } from "@/components/charts/MetricChart";
-import { StatCard } from "@/components/charts/StatCard";
+import { MetricChart, StatCard } from "@/components/charts";
 import { ChatbotCard } from "@/components/chatbot/ChatbotCard";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { PageHeader } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Plus, Bot, MessageSquare, Users, TrendingUp } from "lucide-react";
 import { motion } from "motion/react";

@@ -9,17 +9,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChatInterface } from '@/components/chat/ChatInterface';
 import { Badge } from '@/components/ui/badge';
 import { useWorkspace } from '@/store/WorkspaceContext';
-import { useChatbot } from '@/hooks';
+import { useChat } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import SidebarContainer from '@/components/layout/SidebarContainer';
+import { Chatbot } from '@/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Playground() {
 
     const { id } = useParams();
-    const { getChatbot, getSelectiveFiles } = useWorkspace();
-    const chatbot = getChatbot(id as string ?? '');
-    const { messages, isLoading, sendMessage, clearMessages } = useChatbot({ chatbotId: id as string ?? '' });
+    const { fetchBot, getSelectiveFiles, currentWorkspace } = useWorkspace();
+    const [chatbot, setChatbot] = useState<Chatbot | null>(null);
+    const { messages, isMsgLoading, sendMessage, tokens, clearMessages } = useChat(id as string ?? "", currentWorkspace?.id as string ?? "");
     const router = useRouter();
 
     const [showDevMode, setShowDevMode] = useState(false);
@@ -31,29 +33,31 @@ export default function Playground() {
 
     useEffect(() => {
 
-        const getKnowledgeBases = async () => {
-            const chatbot = getChatbot(id as string);
-            const knowledgeIds = chatbot?.knowledge.filter(x => x.enabled).map(x => x.id) ?? [];
+        const getKnowledgeBases = async (chatbot: Chatbot) => {
+            const knowledgeIds = chatbot?.knowledge?.filter(x => x.enabled).map(x => x.id) ?? [];
             const result = await getSelectiveFiles(knowledgeIds);
             setCurrentKnowledgeBase(result);
             setCurrentKnowledgeIds(knowledgeIds);
         }
 
-        getKnowledgeBases();
+        const fetchChatBot = async () => {
 
-    }, []);
+            fetchBot(id as string, (data: any) => {
+                setChatbot(data as Chatbot);
+                getKnowledgeBases(data);
+            });
+
+        }
+
+        fetchChatBot();
+
+    }, [id]);
 
     if (!chatbot) {
         return (
             <SidebarContainer>
-                <div className="flex flex-col items-center justify-center h-[60vh]">
-                    <h2 className="text-xl font-semibold text-foreground mb-2">Chatbot not found</h2>
-                    <Link href="/chatbot">
-                        <Button className='bg-gray-500 text-white'>
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Back to Chatbots
-                        </Button>
-                    </Link>
+                <div className='mb-6'>
+                    <Skeleton className='h-150 w-full bg-gray-800' />
                 </div>
             </SidebarContainer>
         );
@@ -93,7 +97,7 @@ export default function Playground() {
 
                 {/* Chat Panel */}
                 <Card className='w-full md:w-[60%]'>
-                    <ChatInterface messages={messages} isLoading={isLoading} selectedIds={currentKnowledgeIds} onSendMessage={sendMessage} placeholder="Type a message to test your chatbot..." showSources={showDevMode} />
+                    <ChatInterface messages={messages} chatbot={chatbot} isLoading={isMsgLoading} selectedIds={currentKnowledgeIds} onSendMessage={sendMessage} placeholder="Type a message to test your chatbot..." showSources={showDevMode} />
                 </Card>
 
                 {/* Developer Panel */}
@@ -124,7 +128,7 @@ export default function Playground() {
                     <Card>
                         <CardHeader className="cursor-pointer" onClick={() => setShowPrompt2(!showPrompt2)}>
                             <div className="flex items-center justify-between">
-                                <CardTitle className="text-base">Knowledge Base</CardTitle>
+                                <CardTitle className="text-base">Sources</CardTitle>
                                 {showPrompt2 ? (
                                     <ChevronUp className="w-5 h-5 text-gray-500" />
                                 ) : (
@@ -139,7 +143,7 @@ export default function Playground() {
                                     <div className='bg-gray-800 p-3 rounded-sm text-gray-400'>
                                         <div className='flex flex-col items-center justify-center text-sm'>
                                             <TriangleAlert className='mb-2' />
-                                            No file/s found!
+                                            No sources found!
                                         </div>
                                     </div> :
                                     currentKnowledgeBase.map((x: any) => (
@@ -178,19 +182,25 @@ export default function Playground() {
                     {messages.length > 0 && (
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-base">Last Response</CardTitle>
+                                <CardTitle className="text-base">Tokens used</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-gray-200">Tokens Used</span>
+                                    <span className="text-gray-200">Prompt Tokens</span>
                                     <span className="bg-gray-800 px-2 font-medium rounded-full text-gray-300">
-                                        {messages[messages.length - 1]?.metadata?.tokensUsed || '-'}
+                                        {tokens?.promptTokens || "-"}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-200">Sources</span>
+                                    <span className="text-gray-200">Completion Tokens</span>
                                     <span className="bg-gray-800 px-2 font-medium rounded-full text-gray-300">
-                                        {messages[messages.length - 1]?.metadata?.sources?.length || 0}
+                                        {tokens?.completionTokens || "-"}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-200">Total Tokens</span>
+                                    <span className="bg-gray-800 px-2 font-medium rounded-full text-gray-300">
+                                        {tokens?.totalTokens || "-"}
                                     </span>
                                 </div>
                             </CardContent>

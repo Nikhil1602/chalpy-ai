@@ -1,16 +1,16 @@
 "use client"
 
 import { ChatbotCard } from '@/components/chatbot/ChatbotCard';
-import { PageHeader } from '@/components/layout/PageHeader';
-import SidebarContainer from '@/components/layout/SidebarContainer';
+import { PageHeader } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useWorkspace } from '@/store/WorkspaceContext';
 import { Bot, Plus } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import SidebarContainer from '@/components/layout/SidebarContainer';
+import Link from 'next/link';
 
 const Chatbot = () => {
 
@@ -18,7 +18,9 @@ const Chatbot = () => {
     const router = useRouter();
 
     useEffect(() => {
+
         getAllChatbots();
+
     }, []);
 
     return (
@@ -31,13 +33,15 @@ const Chatbot = () => {
                 </Button>
             </PageHeader>
 
-            {isChatbotsLoading ?
+            {isChatbotsLoading
+                ?
                 <div className='flex flex-wrap gap-5 my-3'>
                     <Skeleton className='h-70 w-120 bg-gray-800' />
                     <Skeleton className='h-70 w-120 bg-gray-800' />
                     <Skeleton className='h-70 w-120 bg-gray-800' />
                 </div>
-                : <div>
+                :
+                <div>
 
                     {chatbots.length === 0 ? (
                         <EmptyState icon={Bot} title="No chatbots yet" description="Create your first chatbot to start engaging with your users through intelligent conversations."
@@ -60,7 +64,8 @@ const Chatbot = () => {
                         </div>
                     )}
 
-                </div>}
+                </div>
+            }
 
 
         </SidebarContainer>

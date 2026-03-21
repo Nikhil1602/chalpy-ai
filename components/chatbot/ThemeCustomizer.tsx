@@ -8,22 +8,7 @@ import { Button } from '@/components/ui/button';
 import { FontFamily, ChatbotPosition, LauncherIcon, ThemeCustomizerProps } from '@/types';
 import { ChatPreview } from '@/components/chatbot/ChatPreview';
 import { Upload, MousePointerClick, MessageSquare, Bot, Sparkles, Headphones, HelpCircle, X } from 'lucide-react';
-import { defaultLauncher } from '@/lib/constants';
-
-const fonts: { value: FontFamily; label: string }[] = [
-    { value: 'Inter', label: 'Inter' },
-    { value: 'Poppins', label: 'Poppins' },
-    { value: 'Roboto', label: 'Roboto' },
-    { value: 'Open Sans', label: 'Open Sans' },
-    { value: 'Lato', label: 'Lato' },
-];
-
-const positions: { value: ChatbotPosition; label: string }[] = [
-    { value: 'bottom-right', label: 'Bottom Right' },
-    { value: 'bottom-left', label: 'Bottom Left' },
-    { value: 'top-right', label: 'Top Right' },
-    { value: 'top-left', label: 'Top Left' },
-];
+import { defaultLauncher, fonts, gradientPresets, positions } from '@/lib/constants';
 
 const launcherIcons: { value: LauncherIcon; label: string; icon: React.ReactNode }[] = [
     { value: 'message', label: 'Message', icon: <MessageSquare className="w-4 h-4" /> },
@@ -31,15 +16,6 @@ const launcherIcons: { value: LauncherIcon; label: string; icon: React.ReactNode
     { value: 'sparkles', label: 'Sparkles', icon: <Sparkles className="w-4 h-4" /> },
     { value: 'headphones', label: 'Support', icon: <Headphones className="w-4 h-4" /> },
     { value: 'help', label: 'Help', icon: <HelpCircle className="w-4 h-4" /> },
-];
-
-const gradientPresets = [
-    { from: '#667eea', to: '#764ba2' },
-    { from: '#f093fb', to: '#f5576c' },
-    { from: '#4facfe', to: '#00f2fe' },
-    { from: '#43e97b', to: '#38f9d7' },
-    { from: '#fa709a', to: '#fee140' },
-    { from: '#a18cd1', to: '#fbc2eb' },
 ];
 
 export function ThemeCustomizer({ theme, onChange, botName }: ThemeCustomizerProps) {

@@ -5,7 +5,6 @@ import { Settings, LayoutDashboard, Bot, ShieldCheck, BookOpen } from "lucide-re
 import { Separator } from '@/components/ui/separator';
 import { usePathname } from 'next/navigation';
 import Link from "next/link";
-import Image from 'next/image';
 import { useWorkspace } from "@/store/WorkspaceContext";
 
 export default function AppSidebar() {

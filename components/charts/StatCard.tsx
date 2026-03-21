@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { StatCardProps } from '@/types';
 
-export function StatCard({ title, value, change, changeType = 'neutral', icon: Icon, index = 0 }: StatCardProps) {
+export default function StatCard({ title, value, change, changeType = 'neutral', icon: Icon, index = 0 }: StatCardProps) {
 
     const changeColors = {
         positive: 'text-emerald-500',

@@ -7,9 +7,7 @@ export async function POST(req: Request) {
 
         const body = await req.json();
 
-        const { name, description, role, systemPrompt, tone, enableMemory, workspaceId, aiModel, knowledgeIds, guardrailIds, configuration } = body;
-        const { provider, model, apiKey } = aiModel;
-
+        const { name, description, role, systemPrompt, tone, enableMemory, workspaceId, provider, model, apiKey, knowledgeIds, guardrailIds, configuration } = body;
 
         if (!name || !workspaceId) {
             return new Response("Missing required fields", { status: 400 });
@@ -179,15 +177,6 @@ export async function GET(req: Request) {
             };
 
         });
-
-
-        // const modifiedChatbots = chatbots.map((x) => {
-
-        //     const { guardrailLinks, ...rest } = x;
-        //     const guardrails = x.guardrailLinks.map(y => y.guardrail);
-        //     return { ...rest, guardrails: guardrails };
-
-        // });
 
         if (!chatbots) {
             return new NextResponse("Chatbot not found", { status: 404 });

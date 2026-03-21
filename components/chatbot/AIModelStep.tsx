@@ -1,100 +1,18 @@
+"use client";
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { AIPlatform, AIModelStepProps, AIProvider } from '@/types';
+import { AIModelStepProps, AIProvider } from '@/types';
 import { cn } from '@/lib/utils';
 import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Link from 'next/link';
+import { aiPlatforms } from '@/lib/constants';
 
-const aiPlatforms: AIPlatform[] = [
-    {
-        id: 'chatgpt',
-        name: 'ChatGPT',
-        provider: 'OpenAI',
-        description: 'GPT-4o, GPT-4.1',
-        iconSrc: '/chatgpt-icon.png',
-        models: [
-            { value: 'gpt-4o', label: 'GPT 4o' },
-            { value: 'gpt-4o-mini', label: 'GPT 4o Mini' },
-            { value: 'gpt-4.1-mini', label: 'GPT 4.1 Mini' }
-        ],
-    },
-    {
-        id: 'gemini',
-        name: 'Gemini',
-        provider: 'Google',
-        description: 'Gemini 1.5',
-        iconSrc: '/google-gemini-icon.png',
-        models: [
-            { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
-            { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' },
-            { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash' },
-        ],
-    },
-    {
-        id: 'claude',
-        name: 'Claude',
-        provider: 'Anthropic',
-        description: 'Claude 3.5',
-        iconSrc: '/claude-ai-icon.png',
-        models: [
-            { value: 'claude-3-haiku', label: 'Claude 3 Haiku' },
-            { value: 'claude-3-sonnet', label: 'Claude 3 Sonnet' },
-            { value: 'claude-3-5-sonnet', label: 'Claude 3.5 Sonnet' },
-        ],
-    },
-    {
-        id: 'meta',
-        name: 'Llama',
-        provider: 'Meta',
-        description: 'Llama 3',
-        iconSrc: '/meta-ai-icon.png',
-        models: [
-            { value: 'meta-llama/llama-3.1-8b-instruct', label: 'Llama 3.1 8B instruct' },
-            { value: 'meta-llama/llama-3.1-70b-instruct', label: 'Llama 3.1 70B instruct' },
-        ],
-    },
-    {
-        id: 'deepseek',
-        name: 'DeepSeek',
-        provider: 'DeepSeek',
-        description: 'DeepSeek R1, DeepSeek V3',
-        iconSrc: '/deepseek-icon.png',
-        models: [
-            { value: 'deepseek-chat', label: 'DeepSeek Chat' },
-            { value: 'deepseek-coder', label: 'DeepSeek Coder' },
-        ],
-    },
-    {
-        id: 'groq',
-        name: 'Groq',
-        provider: 'X AI',
-        description: 'Groq 1.5',
-        iconSrc: '/grok-icon.png',
-        models: [
-            { value: 'llama-3.1-8b-instant', label: 'Llama 3.1 8B instant' },
-            { value: 'llama-3.1-70b-versatile', label: 'Llama 3.1 70B versatile' },
-            { value: 'mixtral-8x7b-32768', label: 'Mixtral 8X7B-32768' },
-        ],
-    },
-    {
-        id: 'mistral',
-        name: 'Mistral',
-        provider: 'Mistral AI',
-        description: 'Mistral Large',
-        iconSrc: '/mistral-ai-icon.png',
-        models: [
-            { value: 'mistral-small', label: 'Mistral Small' },
-            { value: 'mistral-medium', label: 'Mistral Medium' },
-            { value: 'mistral-large', label: 'Mistral Large' },
-        ],
-    }
-]
-
-export function AIModelStep({ config, onChange }: AIModelStepProps) {
+export function AIModelStep({ formData, setFormData }: AIModelStepProps) {
 
     const [showKey, setShowKey] = React.useState(false);
     const [selectedPlatform, setSelectedPlatform] = useState<AIProvider>('groq')
@@ -112,7 +30,7 @@ export function AIModelStep({ config, onChange }: AIModelStepProps) {
             setSelectedModel(platform.models[0].value) // auto select first model
         }
 
-        onChange({ ...config, model: model.id });
+        setFormData({ ...formData, provider: model.id })
 
     }
 
@@ -128,8 +46,8 @@ export function AIModelStep({ config, onChange }: AIModelStepProps) {
                 <CardContent>
                     <div className="flex flex-wrap w-full gap-3">
                         {aiPlatforms.map((model) => (
-                            <motion.button key={model.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => handleModelSelection(model)} className={cn('relative w-[180px] h-[180px] flex items-center flex-col justify-center p-4 cursor-pointer rounded-xl border-2 text-left transition-all duration-200', config.provider === model.id ? 'border-orange-500 bg-orange-500/5 shadow-lg shadow-orange-500/10' : 'border-border hover:border-orange-500/40 hover:bg-muted/50')}>
-                                {config.provider === model.id && (
+                            <motion.button key={model.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => handleModelSelection(model)} className={cn('relative w-[180px] h-[180px] flex items-center flex-col justify-center p-4 cursor-pointer rounded-xl border-2 text-left transition-all duration-200', formData.provider === model.id ? 'border-orange-500 bg-orange-500/5 shadow-lg shadow-orange-500/10' : 'border-border hover:border-orange-500/40 hover:bg-muted/50')}>
+                                {formData.provider === model.id && (
                                     <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-500" />
                                 )}
                                 <img src={model.iconSrc} alt={model.name} width={50} height={50} className="w-8 h-8 mb-2" />
@@ -140,7 +58,7 @@ export function AIModelStep({ config, onChange }: AIModelStepProps) {
                     </div>
                     <div className='mt-5'>
                         <Label className='mb-2'>Chooose model</Label>
-                        <Select value={selectedModel} onValueChange={(val) => setSelectedModel(val)}>
+                        <Select value={selectedModel} onValueChange={(val) => { setSelectedModel(val); setFormData({ ...formData, model: val }) }}>
                             <SelectTrigger className="h-9 w-full">
                                 <SelectValue />
                             </SelectTrigger>
@@ -160,7 +78,7 @@ export function AIModelStep({ config, onChange }: AIModelStepProps) {
                 <CardHeader>
                     <CardTitle>API Key</CardTitle>
                     <CardDescription className='text-gray-500'>
-                        Enter your API key for {aiPlatforms.find(m => m.id === config.provider)?.name || 'the selected model'}.
+                        Enter your API key for {aiPlatforms.find(m => m.id === formData.provider)?.name || 'the selected model'}.
                         Your key is stored securely and never shared.
                     </CardDescription>
                 </CardHeader>
@@ -168,19 +86,19 @@ export function AIModelStep({ config, onChange }: AIModelStepProps) {
                     <div className="space-y-2">
                         <Label>API Key</Label>
                         <div className="relative">
-                            <Input type={showKey ? 'text' : 'password'} placeholder={`Enter your ${aiPlatforms.find(m => m.id === config.provider)?.provider} API key...`} value={config.apiKey} onChange={(e) => onChange({ ...config, apiKey: e.target.value })} className="pr-10 font-mono text-sm" />
+                            <Input type={showKey ? 'text' : 'password'} placeholder={`Enter your ${aiPlatforms.find(m => m.id === formData.provider)?.provider} API key...`} value={formData.apiKey} onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })} className="pr-10 font-mono text-sm" />
                             <button type="button" onClick={() => setShowKey(!showKey)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-foreground transition-colors">
                                 {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
                         </div>
                         <p className="text-xs text-gray-500">
-                            {config.provider === 'chatgpt' && <span>Get your API key frome <Link className='text-blue-500' href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</Link></span>}
-                            {config.provider === 'claude' && <span>Get your API key from <Link className='text-blue-500' href="https://platform.claude.com/settings/keys" target="_blank">platform.claude.com</Link></span>}
-                            {config.provider === 'gemini' && <span>Get your API key from <Link className='text-blue-500' href="https://aistudio.google.com/api-keys" target="_blank">aistudio.google.com</Link></span>}
-                            {config.provider === 'meta' && <span>Get your API key from <Link className='text-blue-500' href="https://llama.developer.meta.com/docs/api-keys" target="_blank">llama.developer.meta.com</Link></span>}
-                            {config.provider === 'groq' && <span>Get your API key from <Link className='text-blue-500' href="https://console.x.ai/" target="_blank">console.x.ai</Link></span>}
-                            {config.provider === 'mistral' && <span>Get your API key from <Link className='text-blue-500' href="https://admin.mistral.ai/organization/api-keys" target="_blank">admin.mistral.ai</Link></span>}
-                            {config.provider === 'deepseek' && <span>Get your API key from <Link className='text-blue-500' href="https://platform.deepseek.com/api_keys" target="_blank">platform.deepseek.com</Link></span>}
+                            {formData.provider === 'chatgpt' && <span>Get your API key frome <Link className='text-blue-500' href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</Link></span>}
+                            {formData.provider === 'claude' && <span>Get your API key from <Link className='text-blue-500' href="https://platform.claude.com/settings/keys" target="_blank">platform.claude.com</Link></span>}
+                            {formData.provider === 'gemini' && <span>Get your API key from <Link className='text-blue-500' href="https://aistudio.google.com/api-keys" target="_blank">aistudio.google.com</Link></span>}
+                            {formData.provider === 'meta' && <span>Get your API key from <Link className='text-blue-500' href="https://llama.developer.meta.com/docs/api-keys" target="_blank">llama.developer.meta.com</Link></span>}
+                            {formData.provider === 'groq' && <span>Get your API key from <Link className='text-blue-500' href="https://console.x.ai/" target="_blank">console.x.ai</Link></span>}
+                            {formData.provider === 'mistral' && <span>Get your API key from <Link className='text-blue-500' href="https://admin.mistral.ai/organization/api-keys" target="_blank">admin.mistral.ai</Link></span>}
+                            {formData.provider === 'deepseek' && <span>Get your API key from <Link className='text-blue-500' href="https://platform.deepseek.com/api_keys" target="_blank">platform.deepseek.com</Link></span>}
                         </p>
                     </div>
                 </CardContent>

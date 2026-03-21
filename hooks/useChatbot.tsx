@@ -1,117 +1,228 @@
+"use client";
+
 import { useState, useCallback } from 'react';
-import { Message, UseChatbotOptions } from '@/types';
-import { useWorkspace } from '@/store/WorkspaceContext';
+import { Chatbot, ThemeConfig, UseChatbotOptions } from '@/types';
+import { defaultGuardrails, defaultTheme } from '@/lib/constants';
+import useToast from './useToast';
+import axios from 'axios';
 
-export default function useChatbot({ chatbotId }: UseChatbotOptions) {
+const formSchema: Partial<Chatbot> = {
+    id: "",
+    name: "",
+    description: "",
+    role: "",
+    systemPrompt: "You are a helpful AI assistant. Answer questions accurately and helpfully.",
+    tone: "professional",
+    enableMemory: true,
+    guardrails: defaultGuardrails,
+    knowledge: [],
+    configuration: defaultTheme,
+    provider: "groq",
+    model: "llama-3.1-8b-instant",
+    apiKey: process.env.GROQ_API_KEY as string,
+}
 
-    const [messages, setMessages] = useState<Message[]>([]);
-    const { currentWorkspace } = useWorkspace();
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+export default function useChatbot(workspaceId: string = "") {
 
-    const sendMessage = useCallback(async (content: string, selectedIds: string[]) => {
+    const [chatbots, setChatbots] = useState<Chatbot[]>([]);
+    const [isChatbotsLoading, setChatbotsLoading] = useState<boolean>(false);
+    const [formData, setFormData] = useState<Partial<Chatbot>>(structuredClone(formSchema));
+    const { showToast } = useToast();
 
-        const userMessage: Message = {
-            id: `msg-${Date.now()}`,
-            role: 'user',
-            content,
-            timestamp: new Date(),
-        };
-
-        setMessages(prev => [...prev, userMessage]);
-        setIsLoading(true);
-        setError(null);
+    const getAllChatbots = async () => {
 
         try {
 
-            const response = await fetch("/api/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    message: content,
-                    chatbotId,
-                    workspaceId: currentWorkspace?.id,
-                    knowledgeIds: [...selectedIds],
-                    history: messages,
-                })
-            });
+            setChatbotsLoading(true);
+            const resp = await axios.get(`/api/chatbots?workspaceId=${workspaceId}`);
+            const result = resp.data;
 
-            if (!response.ok) {
-                const text = await response.text();
-                throw new Error(text || "Request failed");
+            setChatbots(result);
+
+        } catch (err) {
+
+            console.error("Enable to fetch all chatbots: ", err);
+
+        } finally {
+
+            setChatbotsLoading(false);
+
+        }
+
+    }
+
+    const addChatbot = async (chatbot: Chatbot) => {
+
+        try {
+
+            setChatbotsLoading(true);
+
+            const resp = await axios.post(`/api/chatbots?workspaceId=${workspaceId}`, chatbot);
+            const result = resp.data;
+
+            if (result) {
+                setChatbots(prev => [...prev, chatbot]);
             }
 
-            if (!response.body) {
-                throw new Error("No response stream");
+            return result;
+
+        } catch (err) {
+
+            console.error("Enable to fetch all chatbots: ", err);
+
+        } finally {
+
+            await getAllChatbots();
+            setChatbotsLoading(false);
+
+        }
+
+        return null;
+
+    };
+
+    const updateChatbot = async (id: string, updates: Partial<Chatbot>, selectedGuardrailIds: string[], selectedKnowledgeIds: Set<string>) => {
+
+        try {
+
+            setChatbotsLoading(true);
+            let updatedChatbot = chatbots.filter(x => x.id === id).map(bot => ({ ...bot, ...updates, updatedAt: new Date() }))[0];
+            updatedChatbot = {
+                ...updatedChatbot,
+                guardrailIds: selectedGuardrailIds || [],
+                knowledgeIds: Array.from(selectedKnowledgeIds)
             }
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
+            const resp = await axios.put(`/api/chatbots/${id}?workspaceId=${workspaceId}`, updatedChatbot);
+            const result = resp.data;
 
-            const assistantId = `msg-${Date.now() + 1}`;
+            return result;
 
-            const assistantMessage: Message = {
-                id: assistantId,
-                role: "assistant",
-                content: "",
-                timestamp: new Date(),
-            }
+        } catch (err) {
 
-            let created = false;
+            console.error("Enable to fetch all chatbots: ", err);
 
-            while (true) {
+        } finally {
 
-                const { done, value } = await reader.read();
-                if (done) break;
+            await getAllChatbots();
 
-                const chunk = decoder.decode(value || new Uint8Array());
+            setChatbotsLoading(false);
 
-                if (!created) {
-                    created = true;
-                    setMessages(prev => [...prev, assistantMessage]);
-                }
+        }
+        // setChatbots(prev => prev.map(bot => (bot.id === id ? { ...bot, ...updates, updatedAt: new Date() } : bot)));
+    };
 
-                assistantMessage.content += chunk;
+    const deleteChatbot = async (id: string) => {
 
-                setMessages(prev =>
-                    prev.map(msg => msg.id === assistantId ? { ...msg, content: assistantMessage.content } : msg)
-                );
+        try {
+
+            setChatbotsLoading(true);
+
+            const resp = await axios.delete(`/api/chatbots/${id}?workspaceId=${workspaceId}`);
+            const result = resp.data;
+
+            if (result.id) {
+                setChatbots(prev => prev.filter(bot => bot.id !== result.id));
             }
 
         } catch (err) {
 
-            console.log(err);
-            setMessages(prev => [
-                ...prev,
-                {
-                    id: `msg-${Date.now()}`,
-                    role: "assistant",
-                    content: "Sorry, something went wrong while generating the response.",
-                    timestamp: new Date()
-                }
-            ]);
-            setError('Failed to get response. Please try again.');
+            console.error("Enable to fetch all chatbots: ", err);
 
         } finally {
 
-            setIsLoading(false);
+            await getAllChatbots();
+            setChatbotsLoading(false);
 
         }
 
-    }, [chatbotId]);
+        // setChatbots(prev => prev.filter(bot => bot.id !== id));
+    };
 
-    const clearMessages = useCallback(() => {
+    const getChatbot = (id: string) => {
 
-        setMessages([]);
-        setError(null);
+        const existingBot = chatbots.find(bot => bot.id === id);
+        return existingBot;
 
-    }, []);
+    };
+
+    const fetchBot = async (id: string, cb: (data: any) => void) => {
+
+        try {
+
+            setChatbotsLoading(true);
+            const res = await axios.get(`/api/chatbots/${id}?workspaceId=${workspaceId}`);
+            const data = res.data;
+
+            setFormData({ ...data, guardrails: data.guardrailLinks || [], knowledge: data.knowledgeLinks || [] })
+            cb(data);
+
+        } catch (e) {
+
+            console.log(e);
+            showToast("Failed in fetching chatbot", "error");
+
+        } finally {
+
+            setChatbotsLoading(false);
+
+        }
+
+    }
+
+    const handleSaveAdd = async ({ selectedGuardrailIds, selectedKnowledgeIds }: { selectedGuardrailIds: string[], selectedKnowledgeIds: Set<string> }) => {
+
+        if (!formData.name) { showToast('Please provide a name', 'error'); return; }
+
+        const newBot: any = {
+            name: formData.name,
+            description: formData.description || '',
+            role: formData.role || 'Assistant',
+            systemPrompt: formData.systemPrompt || '',
+            tone: formData.tone || 'professional',
+            enableMemory: formData.enableMemory ?? true,
+            guardrailIds: selectedGuardrailIds || [],
+            workspaceId: 'workspace-1',
+            configuration: formData.configuration as ThemeConfig,
+            provider: formData.provider,
+            model: formData.model,
+            apiKey: formData.apiKey,
+            knowledgeIds: Array.from(selectedKnowledgeIds)
+        };
+
+        addChatbot(newBot);
+        showToast('Chatbot created successfully!', 'success');
+
+        await getAllChatbots();
+
+    };
+
+    const handleSaveUpdate = async ({ id, selectedGuardrailIds, selectedKnowledgeIds }: { id: string, selectedGuardrailIds: string[], selectedKnowledgeIds: Set<string> }) => {
+
+        updateChatbot(id as string ?? null, formData, selectedGuardrailIds, selectedKnowledgeIds);
+        showToast('Changes saved successfully!', 'success');
+        await getAllChatbots();
+
+    }
+
+    const resetForm = () => {
+        setFormData(structuredClone(formSchema))
+    }
 
     return {
-        messages,
-        isLoading,
-        error,
-        sendMessage,
-        clearMessages,
+        chatbots,
+        getAllChatbots,
+        addChatbot,
+        fetchBot,
+        resetForm,
+        updateChatbot,
+        deleteChatbot,
+        getChatbot,
+        handleSaveAdd,
+        handleSaveUpdate,
+        isChatbotsLoading,
+        formData,
+        setFormData,
     };
+
 }

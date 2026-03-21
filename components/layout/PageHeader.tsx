@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export function PageHeader({ title, description, children, className, back = false }: PageHeaderProps) {
+export default function PageHeader({ title, description, children, className, back = false }: PageHeaderProps) {
 
     const router = useRouter();
 

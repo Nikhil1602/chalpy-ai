@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+"use client";
+
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
@@ -8,28 +10,7 @@ import { Input } from '@/components/ui/input';
 import { motion } from 'motion/react';
 import { Plus, X } from 'lucide-react';
 import { SystemPromptStepProps } from '@/types';
-
-const personaTemplates = [
-    { name: 'Customer Support', prompt: 'You are a friendly and efficient customer support agent. Always greet the user warmly, acknowledge their issue, and provide clear step-by-step solutions. If you cannot resolve the issue, escalate politely.' },
-    { name: 'Sales Assistant', prompt: 'You are a knowledgeable sales assistant. Help users understand product features, compare options, and make informed decisions. Be persuasive but honest. Never pressure the user.' },
-    { name: 'Technical Expert', prompt: 'You are a technical expert. Provide accurate, detailed technical explanations. Use code examples when relevant. Adapt your explanations to the user\'s apparent skill level.' },
-    { name: 'Onboarding Guide', prompt: 'You are a friendly onboarding guide. Walk new users through setup and features step by step. Be patient, encouraging, and use simple language.' },
-];
-
-const constraintSuggestions = [
-    'Never share or ask for personal information like passwords or credit card numbers.',
-    'Always stay on topic and redirect off-topic conversations politely.',
-    'If unsure about an answer, clearly state that you are not certain.',
-    'Do not make promises about features, timelines, or pricing that are not confirmed.',
-    'Respond in the same language the user is writing in.',
-];
-
-const responseFormats = [
-    { name: 'Concise', instruction: 'Keep responses concise and under 3 sentences when possible.' },
-    { name: 'Structured', instruction: 'Use bullet points and numbered lists for clarity. Break down complex answers into sections.' },
-    { name: 'Conversational', instruction: 'Respond in a natural, conversational tone. Use casual language and occasional emojis.' },
-    { name: 'Formal', instruction: 'Use formal language with proper grammar. Avoid contractions and slang.' },
-];
+import { constraintSuggestions, personaTemplates, responseFormats } from '@/lib/constants';
 
 export function SystemPromptStep({ systemPrompt, onChange }: SystemPromptStepProps) {
 

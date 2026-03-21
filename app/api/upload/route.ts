@@ -1,14 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { supabase } from "@/lib/supabase"
-
-const ALLOWED_TYPES = [
-    "application/pdf",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "text/plain",
-    "text/csv",
-    "text/markdown",
-]
+import { ALLOWED_TYPES } from "@/lib/constants"
 
 export async function POST(req: Request) {
 

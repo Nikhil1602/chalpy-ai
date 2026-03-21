@@ -17,6 +17,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         const chatbot = await prisma.chatbot.findUnique({
             where: { id: id, workspaceId: workspaceId },
             include: {
+                configuration: {
+                    include: {
+                        launcher: true
+                    }
+                },
                 knowledgeLinks: true,
                 guardrailLinks: {
                     include: {
@@ -26,11 +31,42 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             }
         });
 
+        const allKnowledge = await prisma.knowledgeFile.findMany({
+            where: { workspaceId }
+        });
+
+        const allGuardrails = await prisma.guardrail.findMany({
+            where: { workspaceId: workspaceId },
+            orderBy: {
+                createdAt: "desc"
+            }
+        });
+
+        const enabledIds = new Set(chatbot?.guardrailLinks.map(g => g.guardrailId));
+
+        const enabledKnowledgeIds = new Set(chatbot?.knowledgeLinks.map(k => k.fileId));
+
+        const guardrails = allGuardrails.map(g => ({
+            ...g,
+            enabled: enabledIds.has(g.id)
+        }));
+
+        const knowledge = allKnowledge.map(k => ({
+            ...k,
+            enabled: enabledKnowledgeIds.has(k.id)
+        }));
+
+        const modifiedChatbot = {
+            ...chatbot,
+            guardrails,
+            knowledge
+        }
+
         if (!chatbot) {
             return new NextResponse("Chatbot not found", { status: 404 });
         }
 
-        return NextResponse.json(chatbot);
+        return NextResponse.json(modifiedChatbot);
 
     } catch (error) {
 

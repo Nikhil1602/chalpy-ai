@@ -1,13 +1,12 @@
 "use client"
 
-import { PageHeader } from '@/components/layout/PageHeader';
+import { SidebarContainer, PageHeader } from '@/components/layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatSize, getFileExt } from '@/lib/constants';
 import { RefreshCw, Trash2, Upload, X } from 'lucide-react';
 import { Ref } from 'react';
-import SidebarContainer from '@/components/layout/SidebarContainer';
 import { useWorkspace } from '@/store/WorkspaceContext';
 import { motion } from 'motion/react';
 import { Progress } from '@/components/ui/progress';
@@ -91,7 +90,8 @@ const KnowledgeBase = () => {
             </motion.div>
 
         </SidebarContainer>
-    )
+    );
+
 }
 
 export default KnowledgeBase

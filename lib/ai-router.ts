@@ -3,20 +3,34 @@ import Groq from "groq-sdk"
 import Anthropic from "@anthropic-ai/sdk"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 
-export async function generateAIResponse({ provider, model, apiKey, systemPrompt, message }: any) {
+export async function generateAIResponse({ provider, model, apiKey, systemPrompt, message, history = [] }: any) {
+
+    let fullResponse = "";
+
+    const wrapStream = async (stream: any) => {
+        return {
+            stream,
+            getFullResponse: () => fullResponse,
+            append: (text: string) => {
+                fullResponse += text;
+            }
+        }
+    }
 
     if (provider === "chatgpt") {
 
         const openai = new OpenAI({ apiKey })
 
-        return openai.chat.completions.create({
+        const stream = await openai.chat.completions.create({
             model,
             stream: true,
             messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: message }
             ]
-        })
+        });
+
+        return wrapStream(stream);
 
     }
 
@@ -24,14 +38,16 @@ export async function generateAIResponse({ provider, model, apiKey, systemPrompt
 
         const groq = new Groq({ apiKey })
 
-        return groq.chat.completions.create({
+        const stream = await groq.chat.completions.create({
             model,
             stream: true,
             messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: message }
             ],
-        })
+        });
+
+        return wrapStream(stream);
 
     }
 
@@ -42,14 +58,16 @@ export async function generateAIResponse({ provider, model, apiKey, systemPrompt
             baseURL: "https://openrouter.ai/api/v1"
         });
 
-        return meta.chat.completions.create({
+        const stream = await meta.chat.completions.create({
             model,
             messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: message }
             ],
             stream: true
-        })
+        });
+
+        return wrapStream(stream);
 
     }
 
@@ -60,7 +78,7 @@ export async function generateAIResponse({ provider, model, apiKey, systemPrompt
             baseURL: "https://api.deepseek.com"
         });
 
-        return deepseek.chat.completions.create({
+        const stream = await deepseek.chat.completions.create({
             model,
             messages: [
                 { role: "system", content: systemPrompt },
@@ -68,6 +86,8 @@ export async function generateAIResponse({ provider, model, apiKey, systemPrompt
             ],
             stream: true
         });
+
+        return wrapStream(stream);
 
     }
 
@@ -78,7 +98,7 @@ export async function generateAIResponse({ provider, model, apiKey, systemPrompt
             baseURL: "https://api.mistral.ai/v1"
         });
 
-        return mistral.chat.completions.create({
+        const stream = await mistral.chat.completions.create({
             model,
             messages: [
                 { role: "system", content: systemPrompt },
@@ -86,6 +106,8 @@ export async function generateAIResponse({ provider, model, apiKey, systemPrompt
             ],
             stream: true
         });
+
+        return wrapStream(stream);
 
     }
 
@@ -95,7 +117,9 @@ export async function generateAIResponse({ provider, model, apiKey, systemPrompt
 
         const geminiModel = genAI.getGenerativeModel({ model });
 
-        return geminiModel.generateContentStream(`${systemPrompt}\n\nUser: ${message}`);
+        const stream = await geminiModel.generateContentStream(`${systemPrompt}\n\nUser: ${message}`);
+
+        return wrapStream(stream);
 
     }
 
@@ -103,12 +127,14 @@ export async function generateAIResponse({ provider, model, apiKey, systemPrompt
 
         const anthropic = new Anthropic({ apiKey });
 
-        return anthropic.messages.stream({
+        const stream = await anthropic.messages.stream({
             model,
             system: systemPrompt,
             max_tokens: 1024,
             messages: [{ role: "user", content: message }]
         });
+
+        return wrapStream(stream);
 
     }
 

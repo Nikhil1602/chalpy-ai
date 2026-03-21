@@ -2,7 +2,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MetricChartProps } from '@/types';
 
-export function MetricChart({ title, data, type = 'area', color = 'hsl(23 100% 50%)' }: MetricChartProps) {
+export default function MetricChart({ title, data, type = 'area', color = 'hsl(23 100% 50%)' }: MetricChartProps) {
 
     return (
         <Card>

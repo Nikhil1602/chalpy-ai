@@ -1,0 +1,53 @@
+(function () {
+
+    const script = document.currentScript;
+    const botId = script.getAttribute("data-bot-id");
+
+    if (!botId) {
+        console.error("Missing data-bot-id");
+        return;
+    }
+
+    const iframe = document.createElement("iframe");
+
+    iframe.src = `http://localhost:3000/embed/${botId}`;
+
+    iframe.style.position = "fixed";
+    iframe.style.bottom = "90px";
+    iframe.style.right = "20px";
+    iframe.style.width = "350px";
+    iframe.style.height = "500px";
+    iframe.style.border = "none";
+    iframe.style.borderRadius = "12px";
+    iframe.style.boxShadow = "0 4px 20px rgba(0,0,0,0.2)";
+    iframe.style.display = "none";
+    iframe.style.zIndex = "9999";
+
+    document.body.appendChild(iframe);
+
+    const button = document.createElement("button");
+
+    button.innerHTML = "💬";
+
+    button.style.position = "fixed";
+    button.style.bottom = "20px";
+    button.style.right = "20px";
+    button.style.width = "60px";
+    button.style.height = "60px";
+    button.style.borderRadius = "50%";
+    button.style.background = "#667eea";
+    button.style.color = "#fff";
+    button.style.border = "none";
+    button.style.cursor = "pointer";
+    button.style.zIndex = "9999";
+
+    let open = false;
+
+    button.onclick = () => {
+        open = !open;
+        iframe.style.display = open ? "block" : "none";
+    };
+
+    document.body.appendChild(button);
+
+})();

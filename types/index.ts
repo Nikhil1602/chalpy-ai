@@ -1,3 +1,4 @@
+import { ALLOWED_TONES } from "@/lib/constants";
 import { LucideIcon } from "lucide-react";
 import { ChangeEvent, Dispatch, ReactNode, Ref, RefObject, SetStateAction } from "react";
 
@@ -72,7 +73,9 @@ export interface Chatbot {
     knowledge: any[];
     workspaceId: string;
     configuration: ThemeConfig;
-    aiModel: AIModelConfig;
+    apiKey: string;
+    model: string;
+    provider: AIProvider;
     knowledgeIds: string[];
 };
 
@@ -211,8 +214,8 @@ export interface ThemeCustomizerProps {
 }
 
 export interface AIModelStepProps {
-    config: AIModelConfig;
-    onChange: (config: AIModelConfig) => void;
+    formData: Partial<Chatbot>;
+    setFormData: Dispatch<SetStateAction<Partial<Chatbot>>>;
 }
 
 export interface AnimatedSectionProps {
@@ -231,9 +234,10 @@ export interface PageHeaderProps {
 
 export interface ChatInterfaceProps {
     messages: Message[];
+    chatbot: Chatbot;
     isLoading: boolean;
     selectedIds: string[];
-    onSendMessage: (message: string, selectedIds: string[]) => void;
+    onSendMessage: (message: string, selectedIds: string[], tone: Chatbot["tone"], enabledMemory: boolean) => void;
     placeholder?: string;
     showSources?: boolean;
 }
@@ -258,36 +262,84 @@ export interface StatCardProps {
     index?: number;
 }
 
-export interface WorkspaceContextType {
-    currentWorkspace: Workspace | null;
-    chatbots: Chatbot[];
-    isChatbotsLoading: Boolean;
+export interface GuardrailHookTypes {
     isGuardrailLoading: Boolean;
-    guardrails: GuardrailRule[];
-    setCurrentWorkspace: (workspace: Workspace | null) => void;
-    addChatbot: (chatbot: Chatbot) => any;
-    getAllChatbots: () => void;
-    updateChatbot: (id: string, updates: Partial<Chatbot>, selectedGuardrailIds: string[], selectedKnowledgeIds: Set<string>) => void;
-    deleteChatbot: (id: string) => void;
+    guardrails: [] | GuardrailRule[];
+    getAllGuardrails: () => Promise<void>;
+    addGuardrail: (rule: Omit<GuardrailRule, "id" | "enabled">) => Promise<void>;
+    updateGuardrail: (id: string, updates: Partial<GuardrailRule>) => Promise<void>;
+    deleteGuardrail: (id: string) => Promise<void>;
+}
+
+export interface ChatbotHookTypes {
+    chatbots: Chatbot[];
+    getAllChatbots: () => Promise<void>;
+    addChatbot: (chatbot: Chatbot) => Promise<any>;
+    updateChatbot: (id: string, updates: Partial<Chatbot>, selectedGuardrailIds: string[], selectedKnowledgeIds: Set<string>) => Promise<any>;
+    deleteChatbot: (id: string) => Promise<void>;
     getChatbot: (id: string) => Chatbot | undefined;
-    addGuardrail: (rule: Omit<GuardrailRule, 'id' | 'enabled'>) => void;
-    updateGuardrail: (id: string, updates: Partial<GuardrailRule>) => void;
-    deleteGuardrail: (id: string) => void;
+    handleSaveAdd: ({ selectedGuardrailIds, selectedKnowledgeIds }: { selectedGuardrailIds: string[]; selectedKnowledgeIds: Set<string> }) => Promise<void>;
+    handleSaveUpdate: ({ id, selectedGuardrailIds, selectedKnowledgeIds }: { id: string; selectedGuardrailIds: string[]; selectedKnowledgeIds: Set<string> }) => Promise<any>;
+    isChatbotsLoading: boolean;
+    formData: Partial<Chatbot>;
+    setFormData: Dispatch<SetStateAction<Partial<Chatbot>>>;
+}
+
+export interface KnowledgeBaseHookTypes {
     knowledgeFiles: KnowledgeFile[];
-    uploadProgress: number;
-    selectedIds: Set<string>;
     inputRef: RefObject<HTMLInputElement | null>;
+    selectedIds: Set<string>;
+    uploadProgress: number;
+    getSelectiveFiles: (ids: string[]) => Promise<any>;
     showLoader: boolean;
     selectedKnowledgeIds: Set<string>;
     toggleSelectKnowledgeFile: (id: string) => void;
-    handleFiles: (files: FileList | null) => void;
-    removeFile: (id: string) => void;
-    removeSelectedFile: () => void;
-    toggleSelectFile: (id: string) => void;
-    toggleAllFiles: () => void;
-    getFileIcon: (type: string) => React.JSX.Element;
+    getFileIcon: (type: string) => any;
+    handleFiles: (fileList: FileList | null) => void;
     handleDrop: (e: React.DragEvent) => void;
+    removeFile: (id: string) => Promise<void>;
+    removeSelectedFile: () => Promise<void>;
+    toggleAllFiles: () => void;
+    toggleSelectFile: (id: string) => void;
+}
+
+export interface WorkspaceContextType {
+    currentWorkspace: Workspace | null;
+    setCurrentWorkspace: Dispatch<SetStateAction<Workspace | null>>;
+    isGuardrailLoading: Boolean;
+    guardrails: [] | GuardrailRule[];
+    getAllGuardrails: () => Promise<void>;
+    addGuardrail: (rule: Omit<GuardrailRule, "id" | "enabled">) => Promise<void>;
+    updateGuardrail: (id: string, updates: Partial<GuardrailRule>) => Promise<void>;
+    deleteGuardrail: (id: string) => Promise<void>;
+    chatbots: Chatbot[];
+    getAllChatbots: () => Promise<void>;
+    addChatbot: (chatbot: Chatbot) => Promise<any>;
+    updateChatbot: (id: string, updates: Partial<Chatbot>, selectedGuardrailIds: string[], selectedKnowledgeIds: Set<string>) => Promise<any>;
+    deleteChatbot: (id: string) => Promise<void>;
+    getChatbot: (id: string) => Chatbot | undefined;
+    handleSaveAdd: ({ selectedGuardrailIds, selectedKnowledgeIds }: { selectedGuardrailIds: string[]; selectedKnowledgeIds: Set<string> }) => Promise<void>;
+    handleSaveUpdate: ({ id, selectedGuardrailIds, selectedKnowledgeIds }: { id: string; selectedGuardrailIds: string[]; selectedKnowledgeIds: Set<string> }) => Promise<any>;
+    isChatbotsLoading: boolean;
+    formData: Partial<Chatbot>;
+    fetchBot: (id: string, cb: (data: any) => void) => Promise<void>;
+    resetForm: () => void;
+    setFormData: Dispatch<SetStateAction<Partial<Chatbot>>>;
+    knowledgeFiles: KnowledgeFile[];
+    inputRef: RefObject<HTMLInputElement | null>;
+    selectedIds: Set<string>;
+    uploadProgress: number;
     getSelectiveFiles: (ids: string[]) => Promise<any>;
+    showLoader: boolean;
+    selectedKnowledgeIds: Set<string>;
+    toggleSelectKnowledgeFile: (id: string) => void;
+    getFileIcon: (type: string) => React.JSX.Element;
+    handleFiles: (fileList: FileList | null) => void;
+    handleDrop: (e: React.DragEvent) => void;
+    removeFile: (id: string) => Promise<void>;
+    removeSelectedFile: () => Promise<void>;
+    toggleAllFiles: () => void;
+    toggleSelectFile: (id: string) => void;
 }
 
 export interface KnowledgeFile {
@@ -300,4 +352,18 @@ export interface KnowledgeFile {
 export interface KnowledgeStepProps {
     files: KnowledgeFile[];
     onChange: (files: KnowledgeFile[]) => void;
+}
+
+export type Tone = typeof ALLOWED_TONES[number];
+
+export interface ChatHandlePropTypes {
+    message: string;
+    workspaceId: string;
+    knowledgeIds: string[];
+    provider: string;
+    model: string;
+    apiKey?: string;
+    tone?: Tone | null;
+    enabledMemory?: boolean;
+    history?: string[];
 }
