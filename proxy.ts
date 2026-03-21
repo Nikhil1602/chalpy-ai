@@ -7,7 +7,7 @@ export async function proxy(req: NextRequest) {
     const { pathname } = req.nextUrl
 
     // allow landing page separately
-    if (pathname === "/" || pathname.startsWith("/auth") || pathname.startsWith("/api") || pathname.startsWith("/verify") || pathname.startsWith("/reset")) {
+    if (pathname === "/" || pathname.startsWith("/auth") || pathname.startsWith("/api") || pathname.startsWith("/verify") || pathname.startsWith("/reset") || pathname.startsWith("/widget") || pathname.startsWith("/embed") || pathname.startsWith("/v1/embed")) {
         return NextResponse.next()
     }
 
@@ -24,5 +24,7 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
-}
+    matcher: [
+        "/((?!_next/static|_next/image|favicon.ico|widget|embed|v1/embed).*)",
+    ],
+};
