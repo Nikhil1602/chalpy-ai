@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Save, Shield, Brain, Palette, ChevronLeft, ChevronRight, Clipboard, Play, FlaskConical, Settings, ExternalLink, TriangleAlert, ArrowUpRight } from 'lucide-react';
+import { ArrowLeft, Save, Shield, Brain, Palette, ChevronLeft, ChevronRight, Clipboard, Play, FlaskConical, Settings, ExternalLink, TriangleAlert, ArrowUpRight, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -346,7 +346,8 @@ export default function ChatbotEditor() {
                         {`<script src="https://chalpy-ai.vercel.app/widget.js" data-bot-id="${id || 'new'}" async></script>`}
                       </code>
                     </div>
-                    <Button className="bg-orange-600 hover:bg-orange-800 cursor-pointer" size="sm" onClick={() => { navigator.clipboard.writeText(`<script src="https://chalpy.ai/widget.js" data-bot-id="${id || 'new'}" async></script>`); showToast('Copied to clipboard!', 'success'); }}>
+                    <div className='text-xs text-gray-500 flex items-center gap-2 mb-3'><Info size={15} />{`Place this script before closing </body> tag.`}</div>
+                    <Button className="bg-orange-600 hover:bg-orange-800 cursor-pointer" size="sm" onClick={() => { navigator.clipboard.writeText(`<script src="https://chalpy-ai.vercel.app/widget.js" data-bot-id="${id || 'new'}" async></script>`); showToast('Copied to clipboard!', 'success'); }}>
                       <Clipboard className="w-4 h-4 mr-2" /> Copy to Clipboard
                     </Button>
                   </div>
