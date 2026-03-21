@@ -443,3 +443,9 @@ export const menuItems = [
   { id: 'menu-item-4', title: "Knowledge Base", href: "/knowledge-base", icon: BookOpen },
   { id: 'menu-item-5', title: "Settings", href: "/settings", icon: Settings },
 ];
+
+export function isValidColor(color: string | null) {
+
+  return color ? CSS.supports("color", color) : false;
+
+}
