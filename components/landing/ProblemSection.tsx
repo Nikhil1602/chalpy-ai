@@ -1,28 +1,5 @@
 import AnimatedSection from "@/components/landing/AnimatedSection";
-import { Ban, DollarSign, Paintbrush, ShieldOff } from "lucide-react";
-
-const problems = [
-    {
-        icon: ShieldOff,
-        title: "Black-Box AI Tools",
-        description: "No visibility into how your data is processed, stored, or used by the AI provider.",
-    },
-    {
-        icon: DollarSign,
-        title: "Unpredictable AI Costs",
-        description: "Hidden markup on API usage. You're paying 3-5× more than direct model pricing.",
-    },
-    {
-        icon: Paintbrush,
-        title: "Generic Chatbot UI",
-        description: "Cookie-cutter widgets that scream 'third-party tool' and erode brand trust.",
-    },
-    {
-        icon: Ban,
-        title: "No Control Over Models",
-        description: "Locked into one provider's model with no way to switch or compare performance.",
-    },
-];
+import { problems } from "@/lib/constants";
 
 const ProblemSection = () => {
 

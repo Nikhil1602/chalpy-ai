@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import logoImg from "@/public/logo.png"
 import AnimatedSection from "@/components/landing/AnimatedSection";
 
 const CustomizationSection = () => {
@@ -81,7 +84,7 @@ const CustomizationSection = () => {
                                     <label className="text-sm text-gray-600 font-medium mb-2 block">Logo</label>
                                     <div className="flex items-center gap-3 rounded-lg border border-dashed border-gray-800 bg-gray-800/50 px-4 py-3">
                                         <div className="p-2 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-500 text-xs font-bold">
-                                            <Image src="/logo.png" alt="Chalpy AI Logo" width={32} height={32} />
+                                            <Image src={logoImg} alt="Chalpy AI Logo" width={32} height={32} />
                                         </div>
                                         <span className="text-xs text-gray-500">logo.svg uploaded</span>
                                     </div>
@@ -94,7 +97,7 @@ const CustomizationSection = () => {
                                     <div className="rounded-2xl border border-orange-500/20 bg-card overflow-hidden glow-sm">
                                         {/* Header */}
                                         <div className="bg-orange-500/10 px-4 py-3 flex items-center gap-2">
-                                            <Image src="/logo.png" alt="Chalpy AI Logo" width={30} height={30} />
+                                            <Image src={logoImg} alt="Chalpy AI Logo" width={30} height={30} />
                                             <span className="text-sm font-semibold text-foreground">Chalpy Bot</span>
                                             <div className="ml-auto w-2 h-2 rounded-full bg-orange-500" />
                                         </div>

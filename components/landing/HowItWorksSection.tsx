@@ -1,32 +1,5 @@
 import AnimatedSection from "@/components/landing/AnimatedSection";
-import { Cpu, Upload, Paintbrush, Globe } from "lucide-react";
-
-const steps = [
-    {
-        icon: Cpu,
-        step: "01",
-        title: "Select AI Model & Add API Key",
-        description: "Choose from OpenAI, Anthropic, or others. Plug in your own key for full cost control.",
-    },
-    {
-        icon: Upload,
-        step: "02",
-        title: "Upload Your Content",
-        description: "Feed it PDFs, URLs, docs, or text. Your chatbot learns only from your data.",
-    },
-    {
-        icon: Paintbrush,
-        step: "03",
-        title: "Customize Behavior & Design",
-        description: "Set the tone, personality, and appearance. Match your brand perfectly.",
-    },
-    {
-        icon: Globe,
-        step: "04",
-        title: "Embed on Your Website",
-        description: "Copy one script tag. Your branded AI chatbot is live in seconds.",
-    },
-];
+import { steps } from "@/lib/constants";
 
 const HowItWorksSection = () => {
 
@@ -45,7 +18,6 @@ const HowItWorksSection = () => {
 
                 <div className="relative">
                     {/* Connecting line */}
-                    {/* <div className="absolute left-8 top-0 bottom-0 w-px bg-orange-500 hidden md:block" /> */}
 
                     <div className="space-y-8">
                         {steps.map((step, i) => (

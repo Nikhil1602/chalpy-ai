@@ -6,13 +6,7 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import logoImg from "@/public/logo.png";
 import Image from "next/image";
-
-const navLinks = [
-    { label: "Features", href: "#features" },
-    { label: "Security", href: "#security" },
-    { label: "How It Works", href: "#how-it-works" },
-    { label: "Use Cases", href: "#use-cases" },
-];
+import { navLinks } from "@/lib/constants";
 
 const Navbar = () => {
 

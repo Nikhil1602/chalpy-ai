@@ -1,5 +1,6 @@
 import { ALLOWED_TONES } from "@/lib/constants";
 import { LucideIcon } from "lucide-react";
+import { StaticImageData } from "next/image";
 import { ChangeEvent, Dispatch, ReactNode, Ref, RefObject, SetStateAction } from "react";
 
 export type StorageType = 'local' | 'session';
@@ -55,7 +56,7 @@ export type AIPlatform = {
     name: string
     provider: string
     description: string
-    iconSrc: string
+    iconSrc: StaticImageData
     models: TextModel[]
 };
 

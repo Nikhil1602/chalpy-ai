@@ -1,13 +1,6 @@
 import AnimatedSection from "@/components/landing/AnimatedSection";
-import { Shield, Eye, Server, KeyRound, CheckCircle2 } from "lucide-react";
-
-const trustPoints = [
-    { icon: KeyRound, text: "Bring your own API key — full ownership" },
-    { icon: Shield, text: "Keys encrypted with AES-256 at rest" },
-    { icon: Eye, text: "Never exposed on the frontend" },
-    { icon: Server, text: "Used only for your chatbot sessions" },
-    { icon: CheckCircle2, text: "No vendor lock-in — switch anytime" },
-];
+import { trustPoints } from "@/lib/constants";
+import { Shield } from "lucide-react";
 
 const ModelSecuritySection = () => {
 

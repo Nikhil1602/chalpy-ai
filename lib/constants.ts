@@ -1,4 +1,12 @@
 import { AIModelConfig, AIPlatform, ChatbotPosition, FontFamily, GuardrailRule, LauncherConfig, ThemeConfig } from "@/types";
+import { Ban, BookOpen, Bot, Brain, CheckCircle2, Cpu, DollarSign, Eye, Globe, Headphones, Key, KeyRound, Layers, LayoutDashboard, Paintbrush, Palette, Rocket, Server, Settings, Shield, ShieldCheck, ShieldOff, Target, Upload, Wrench } from "lucide-react";
+import chatgptImg from "@/public/chatgpt-icon.png";
+import geminiImg from "@/public/google-gemini-icon.png";
+import deepseekImg from "@/public/deepseek-icon.png";
+import claudeImg from "@/public/claude-ai-icon.png";
+import groqImg from "@/public/grok-icon.png";
+import metaImg from "@/public/meta-ai-icon.png";
+import mistralImg from "@/public/mistral-ai-icon.png"
 
 export const htmlTemplate = (templateDetails: { title: string, description: string, link: string, name: string, linkText: string }) => `
 <!DOCTYPE html>
@@ -137,7 +145,7 @@ export const aiPlatforms: AIPlatform[] = [
     name: 'ChatGPT',
     provider: 'OpenAI',
     description: 'GPT-4o, GPT-4.1',
-    iconSrc: '/chatgpt-icon.png',
+    iconSrc: chatgptImg,
     models: [
       { value: 'gpt-4o', label: 'GPT 4o' },
       { value: 'gpt-4o-mini', label: 'GPT 4o Mini' },
@@ -149,7 +157,7 @@ export const aiPlatforms: AIPlatform[] = [
     name: 'Gemini',
     provider: 'Google',
     description: 'Gemini 1.5',
-    iconSrc: '/google-gemini-icon.png',
+    iconSrc: geminiImg,
     models: [
       { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
       { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' },
@@ -161,7 +169,7 @@ export const aiPlatforms: AIPlatform[] = [
     name: 'Claude',
     provider: 'Anthropic',
     description: 'Claude 3.5',
-    iconSrc: '/claude-ai-icon.png',
+    iconSrc: claudeImg,
     models: [
       { value: 'claude-3-haiku', label: 'Claude 3 Haiku' },
       { value: 'claude-3-sonnet', label: 'Claude 3 Sonnet' },
@@ -173,7 +181,7 @@ export const aiPlatforms: AIPlatform[] = [
     name: 'Llama',
     provider: 'Meta',
     description: 'Llama 3',
-    iconSrc: '/meta-ai-icon.png',
+    iconSrc: metaImg,
     models: [
       { value: 'meta-llama/llama-3.1-8b-instruct', label: 'Llama 3.1 8B instruct' },
       { value: 'meta-llama/llama-3.1-70b-instruct', label: 'Llama 3.1 70B instruct' },
@@ -184,7 +192,7 @@ export const aiPlatforms: AIPlatform[] = [
     name: 'DeepSeek',
     provider: 'DeepSeek',
     description: 'DeepSeek R1, DeepSeek V3',
-    iconSrc: '/deepseek-icon.png',
+    iconSrc: deepseekImg,
     models: [
       { value: 'deepseek-chat', label: 'DeepSeek Chat' },
       { value: 'deepseek-coder', label: 'DeepSeek Coder' },
@@ -195,7 +203,7 @@ export const aiPlatforms: AIPlatform[] = [
     name: 'Groq',
     provider: 'X AI',
     description: 'Groq 1.5',
-    iconSrc: '/grok-icon.png',
+    iconSrc: groqImg,
     models: [
       { value: 'llama-3.1-8b-instant', label: 'Llama 3.1 8B instant' },
       { value: 'llama-3.1-70b-versatile', label: 'Llama 3.1 70B versatile' },
@@ -207,7 +215,7 @@ export const aiPlatforms: AIPlatform[] = [
     name: 'Mistral',
     provider: 'Mistral AI',
     description: 'Mistral Large',
-    iconSrc: '/mistral-ai-icon.png',
+    iconSrc: mistralImg,
     models: [
       { value: 'mistral-small', label: 'Mistral Small' },
       { value: 'mistral-medium', label: 'Mistral Medium' },
@@ -277,3 +285,159 @@ export const ALLOWED_TYPES = [
   "text/csv",
   "text/markdown",
 ]
+
+export const footerLinks = {
+  "Quick Links": [
+    {
+      id: 1,
+      name: "Features",
+      href: "#features",
+    },
+    {
+      id: 2,
+      name: "Security",
+      href: "#security",
+    },
+    {
+      id: 3,
+      name: "How It Works",
+      href: "#how-it-works",
+    },
+    {
+      id: 4,
+      name: "Use Cases",
+      href: "#use-cases",
+    }
+  ],
+};
+
+export const steps = [
+  {
+    icon: Cpu,
+    step: "01",
+    title: "Select AI Model & Add API Key",
+    description: "Choose from OpenAI, Anthropic, or others. Plug in your own key for full cost control.",
+  },
+  {
+    icon: Upload,
+    step: "02",
+    title: "Upload Your Content",
+    description: "Feed it PDFs, URLs, docs, or text. Your chatbot learns only from your data.",
+  },
+  {
+    icon: Paintbrush,
+    step: "03",
+    title: "Customize Behavior & Design",
+    description: "Set the tone, personality, and appearance. Match your brand perfectly.",
+  },
+  {
+    icon: Globe,
+    step: "04",
+    title: "Embed on Your Website",
+    description: "Copy one script tag. Your branded AI chatbot is live in seconds.",
+  },
+];
+
+export const trustPoints = [
+  { icon: KeyRound, text: "Bring your own API key — full ownership" },
+  { icon: Shield, text: "Keys encrypted with AES-256 at rest" },
+  { icon: Eye, text: "Never exposed on the frontend" },
+  { icon: Server, text: "Used only for your chatbot sessions" },
+  { icon: CheckCircle2, text: "No vendor lock-in — switch anytime" },
+];
+
+export const navLinks = [
+  { label: "Features", href: "#features" },
+  { label: "Security", href: "#security" },
+  { label: "How It Works", href: "#how-it-works" },
+  { label: "Use Cases", href: "#use-cases" },
+];
+
+export const problems = [
+  {
+    icon: ShieldOff,
+    title: "Black-Box AI Tools",
+    description: "No visibility into how your data is processed, stored, or used by the AI provider.",
+  },
+  {
+    icon: DollarSign,
+    title: "Unpredictable AI Costs",
+    description: "Hidden markup on API usage. You're paying 3-5× more than direct model pricing.",
+  },
+  {
+    icon: Paintbrush,
+    title: "Generic Chatbot UI",
+    description: "Cookie-cutter widgets that scream 'third-party tool' and erode brand trust.",
+  },
+  {
+    icon: Ban,
+    title: "No Control Over Models",
+    description: "Locked into one provider's model with no way to switch or compare performance.",
+  },
+];
+
+export const solutions = [
+  {
+    icon: Brain,
+    title: "Knowledge-Only Responses",
+    description: "Your chatbot only answers from your uploaded content. No hallucinations, no off-topic wandering.",
+    tag: "RAG-Powered",
+  },
+  {
+    icon: Layers,
+    title: "Model-Agnostic Architecture",
+    description: "Switch between OpenAI, Anthropic, or any compatible model. Compare results, optimize for cost or quality.",
+    tag: "Multi-Model",
+  },
+  {
+    icon: Key,
+    title: "Bring Your Own Key",
+    description: "Use your own API key for full cost transparency. Pay only what the provider charges — zero markup.",
+    tag: "BYOK",
+  },
+  {
+    icon: Palette,
+    title: "Full UI Customization",
+    description: "Colors, fonts, logos, position — every pixel matches your brand. Your chatbot, your design.",
+    tag: "White-Label",
+  },
+];
+
+export const useCases = [
+  {
+    icon: Headphones,
+    title: "Customer Support",
+    description: "Deflect 60%+ of tickets with instant, accurate responses from your knowledge base.",
+    stat: "60%",
+    statLabel: "fewer tickets",
+  },
+  {
+    icon: Target,
+    title: "Lead Generation",
+    description: "Qualify visitors 24/7 with conversational intake forms and smart routing.",
+    stat: "3×",
+    statLabel: "more leads",
+  },
+  {
+    icon: Wrench,
+    title: "Internal Tools",
+    description: "Give your team instant access to SOPs, policies, and technical documentation.",
+    stat: "80%",
+    statLabel: "faster answers",
+  },
+  {
+    icon: Rocket,
+    title: "Product Onboarding",
+    description: "Guide new users through setup with contextual, AI-powered walkthroughs.",
+    stat: "2×",
+    statLabel: "activation rate",
+  },
+];
+
+export const menuItems = [
+  { id: 'menu-item-1', title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { id: 'menu-item-2', title: "Chatbot", href: "/chatbot", icon: Bot },
+  { id: 'menu-item-3', title: "Guardrails", href: "/guardrails", icon: ShieldCheck },
+  { id: 'menu-item-4', title: "Knowledge Base", href: "/knowledge-base", icon: BookOpen },
+  { id: 'menu-item-5', title: "Settings", href: "/settings", icon: Settings },
+];

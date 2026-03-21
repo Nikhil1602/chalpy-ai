@@ -1,32 +1,5 @@
 import AnimatedSection from "@/components/landing/AnimatedSection";
-import { Brain, Key, Layers, Palette } from "lucide-react";
-
-const solutions = [
-    {
-        icon: Brain,
-        title: "Knowledge-Only Responses",
-        description: "Your chatbot only answers from your uploaded content. No hallucinations, no off-topic wandering.",
-        tag: "RAG-Powered",
-    },
-    {
-        icon: Layers,
-        title: "Model-Agnostic Architecture",
-        description: "Switch between OpenAI, Anthropic, or any compatible model. Compare results, optimize for cost or quality.",
-        tag: "Multi-Model",
-    },
-    {
-        icon: Key,
-        title: "Bring Your Own Key",
-        description: "Use your own API key for full cost transparency. Pay only what the provider charges — zero markup.",
-        tag: "BYOK",
-    },
-    {
-        icon: Palette,
-        title: "Full UI Customization",
-        description: "Colors, fonts, logos, position — every pixel matches your brand. Your chatbot, your design.",
-        tag: "White-Label",
-    },
-];
+import { solutions } from "@/lib/constants";
 
 const SolutionSection = () => {
 

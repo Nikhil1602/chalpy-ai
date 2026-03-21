@@ -4,8 +4,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { Mail, Lock, User, ArrowRight, Eye, EyeOff, LoaderCircle } from "lucide-react";
-import { signIn } from 'next-auth/react'
+import { signIn } from 'next-auth/react';
 import { useAuth } from "@/store/AuthContext";
+import logoImg from "@/public/logo.png";
 import Image from "next/image";
 
 const formVariants = {
@@ -51,7 +52,7 @@ const AuthPage = () => {
                         {/* Header */}
                         <motion.div className="text-center mb-2" layout>
                             <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4">
-                                <Image src="/logo.png" alt="Logo" width={50} height={50} />
+                                <Image src={logoImg} alt="Logo" width={50} height={50} />
                             </div>
                             <AnimatePresence mode="wait">
                                 <motion.div key={authState.hasSignUp ? "signup" : "signin"} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.25 }}>

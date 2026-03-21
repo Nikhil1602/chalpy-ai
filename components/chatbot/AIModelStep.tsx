@@ -11,6 +11,7 @@ import { motion } from 'motion/react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Link from 'next/link';
 import { aiPlatforms } from '@/lib/constants';
+import Image from 'next/image';
 
 export function AIModelStep({ formData, setFormData }: AIModelStepProps) {
 
@@ -50,7 +51,7 @@ export function AIModelStep({ formData, setFormData }: AIModelStepProps) {
                                 {formData.provider === model.id && (
                                     <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-500" />
                                 )}
-                                <img src={model.iconSrc} alt={model.name} width={50} height={50} className="w-8 h-8 mb-2" />
+                                <Image src={model.iconSrc} alt={model.name} width={50} height={50} className="w-8 h-8 mb-2" />
                                 <p className="font-semibold text-foreground">{model.name}</p>
                                 <span className="text-xs bg-orange-500/50 px-2 py-1 rounded-full text-muted-foreground mt-0.5">{model.provider}</span>
                             </motion.button>

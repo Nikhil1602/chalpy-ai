@@ -1,30 +1,9 @@
+"use client";
+
+import { footerLinks } from "@/lib/constants";
+import logoImg from "@/public/logo.png"
 import Image from "next/image";
 import Link from "next/link";
-
-const footerLinks = {
-    "Quick Links": [
-        {
-            id: 1,
-            name: "Features",
-            href: "#features",
-        },
-        {
-            id: 2,
-            name: "Security",
-            href: "#security",
-        },
-        {
-            id: 3,
-            name: "How It Works",
-            href: "#how-it-works",
-        },
-        {
-            id: 4,
-            name: "Use Cases",
-            href: "#use-cases",
-        }
-    ],
-};
 
 const Footer = () => {
     return (
@@ -34,11 +13,7 @@ const Footer = () => {
                     {/* Brand */}
                     <div>
                         <div className="flex items-center gap-2 mb-4">
-                            {/* <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500/20">
-                                <span className="text-lg font-bold text-orange-500">⚡</span>
-                            </div>
-                            <span className="text-lg font-bold text-foreground">ChatForge</span> */}
-                            <img src="/logo.png" alt="Chalpy AI Logo" width={45} height={45} />
+                            <Image src={logoImg} alt="Chalpy AI Logo" width={45} height={45} />
                         </div>
                         <p className="text-sm text-gray-500 leading-relaxed">
                             Build branded AI chatbots trained on your data — powered by your AI models.

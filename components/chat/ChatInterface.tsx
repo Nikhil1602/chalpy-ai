@@ -3,9 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Send, Loader2, Sparkles, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 import { ChatInterfaceProps } from '@/types';
-import { MarkdownRenderer } from '../chatbot/MarkdownRenderer';
+import { MarkdownRenderer } from '@/components/chatbot/MarkdownRenderer';
 
 export function ChatInterface({ messages, chatbot, isLoading, selectedIds, onSendMessage, placeholder = 'Type your message...', showSources = false }: ChatInterfaceProps) {
 

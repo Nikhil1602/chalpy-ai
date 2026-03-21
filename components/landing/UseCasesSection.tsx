@@ -1,36 +1,5 @@
 import AnimatedSection from "@/components/landing/AnimatedSection";
-import { Headphones, Target, Wrench, Rocket } from "lucide-react";
-
-const useCases = [
-    {
-        icon: Headphones,
-        title: "Customer Support",
-        description: "Deflect 60%+ of tickets with instant, accurate responses from your knowledge base.",
-        stat: "60%",
-        statLabel: "fewer tickets",
-    },
-    {
-        icon: Target,
-        title: "Lead Generation",
-        description: "Qualify visitors 24/7 with conversational intake forms and smart routing.",
-        stat: "3×",
-        statLabel: "more leads",
-    },
-    {
-        icon: Wrench,
-        title: "Internal Tools",
-        description: "Give your team instant access to SOPs, policies, and technical documentation.",
-        stat: "80%",
-        statLabel: "faster answers",
-    },
-    {
-        icon: Rocket,
-        title: "Product Onboarding",
-        description: "Guide new users through setup with contextual, AI-powered walkthroughs.",
-        stat: "2×",
-        statLabel: "activation rate",
-    },
-];
+import { useCases } from "@/lib/constants";
 
 const UseCasesSection = () => {
 
