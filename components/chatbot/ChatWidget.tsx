@@ -89,7 +89,7 @@ export function ChatWidget({ chatbotId, workspaceId }: { chatbotId: string, work
 
             <AnimatePresence>
                 {!isOpen && (
-                    <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={() => setIsOpen(true)} className={`absolute ${positionClasses[theme.position]} shadow-xl cursor-pointer flex items-center justify-center text-white z-10`} style={{ background: launcher.backgroundColor, borderRadius: `${launcher.borderRadius}%`, width: launcher.size, height: launcher.size, padding: launcher.padding ?? 8 }}>
+                    <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={() => setIsOpen(true)} className={`absolute ${positionClasses[theme.position]} cursor-pointer flex items-center justify-center text-white z-10`} style={{ background: launcher.backgroundColor, borderRadius: `${launcher.borderRadius}%`, width: launcher.size, height: launcher.size, padding: launcher.padding ?? 8 }}>
                         {renderLauncherContent()}
                     </motion.button>
                 )}
@@ -103,7 +103,7 @@ export function ChatWidget({ chatbotId, workspaceId }: { chatbotId: string, work
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
-                        className={`absolute ${positionClasses[theme.position]} w-[280px] sm:w-[320px] min-h-[400px] shadow-2xl overflow-hidden flex flex-col`} style={{ borderRadius: theme.borderRadius, maxHeight: '400px' }}
+                        className={`absolute ${positionClasses[theme.position]} w-[280px] sm:w-[320px] min-h-[400px] shadow-lg overflow-hidden flex flex-col`} style={{ borderRadius: theme.borderRadius, maxHeight: '400px' }}
                     >
 
                         {/* Header */}
