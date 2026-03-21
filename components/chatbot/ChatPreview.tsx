@@ -89,7 +89,7 @@ export function ChatPreview({ theme, botName }: ChatPreviewProps) {
 
                         {/* Input */}
                         <div className="px-2.5 sm:px-3 py-2 border-t flex items-center gap-2 shrink-0" style={{ backgroundColor: theme.backgroundColor, borderColor: theme.backgroundColor === '#ffffff' ? '#e5e7eb' : 'rgba(255,255,255,0.2)' }}>
-                            <input placeholder="Type a message..." className="flex-1 text-[11px] sm:text-xs bg-transparent outline-none placeholder:opacity-50" style={{ color: theme.textColor }} readOnly />
+                            <input placeholder="Type a message..." className="flex-1 text-[11px] sm:text-xs bg-transparent outline-none" style={{ color: theme.textColor }} readOnly />
                             <button className="w-6 h-6 sm:w-7 sm:h-7 rounded-full cursor-pointer flex items-center justify-center text-white shrink-0" style={{ backgroundColor: theme.accentColor }}>
                                 <Send className="w-3 h-3" />
                             </button>

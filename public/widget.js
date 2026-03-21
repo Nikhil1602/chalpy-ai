@@ -9,8 +9,7 @@
     }
 
     const iframe = document.createElement("iframe");
-
-    iframe.src = `http://localhost:3000/embed/${botId}`;
+    iframe.src = `https://chalpy-ai.vercel.app/v1/embed/${botId}`;
 
     iframe.style.position = "fixed";
     iframe.style.bottom = "90px";

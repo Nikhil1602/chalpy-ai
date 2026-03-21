@@ -278,6 +278,8 @@ export const positions: { value: ChatbotPosition; label: string }[] = [
 
 export const ALLOWED_TONES = ["professional", "casual", "friendly", "formal"] as const;
 
+export const DEPLOYED_URL = 'https://chalpy-ai.vercel.app/v1/embed'
+
 export const ALLOWED_TYPES = [
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",

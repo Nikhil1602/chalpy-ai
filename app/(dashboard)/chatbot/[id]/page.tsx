@@ -21,7 +21,7 @@ import { useStepper, useToast } from '@/hooks';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SidebarContainer } from '@/components/layout';
-import { defaultTheme, formatSize, getFileExt, tones } from '@/lib/constants';
+import { defaultTheme, DEPLOYED_URL, formatSize, getFileExt, tones } from '@/lib/constants';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -343,7 +343,7 @@ export default function ChatbotEditor() {
                     <Label>Embed Script</Label>
                     <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm overflow-x-auto">
                       <code className="text-gray-400">
-                        {`<script src="https://chalpy.ai/widget.js" data-bot-id="${id || 'new'}" async></script>`}
+                        {`<script src="https://chalpy-ai.vercel.app/widget.js" data-bot-id="${id || 'new'}" async></script>`}
                       </code>
                     </div>
                     <Button className="bg-orange-600 hover:bg-orange-800 cursor-pointer" size="sm" onClick={() => { navigator.clipboard.writeText(`<script src="https://chalpy.ai/widget.js" data-bot-id="${id || 'new'}" async></script>`); showToast('Copied to clipboard!', 'success'); }}>
@@ -353,7 +353,7 @@ export default function ChatbotEditor() {
                   <div className="space-y-2">
                     <Label>Public API Endpoint</Label>
                     <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm">
-                      <code className="text-gray-400">{`https://api.chalpy.ai/v1/chat/${id || 'new'}`}</code>
+                      <code className="text-gray-400">{`${DEPLOYED_URL}/${id || 'new'}`}</code>
                     </div>
                   </div>
                   <div className="p-4 rounded-lg bg-orange-500/5 border border-orange-500/20">
