@@ -343,11 +343,11 @@ export default function ChatbotEditor() {
                     <Label>Embed Script</Label>
                     <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm overflow-x-auto">
                       <code className="text-gray-400">
-                        {`<script src="https://chalpy-ai.vercel.app/widget.js" data-bot-id="${id || 'new'}" async></script>`}
+                        {`<script src="https://chalpy-ai.vercel.app/widget.min.js" data-bot-id="${id || 'new'}" async></script>`}
                       </code>
                     </div>
                     <div className='text-xs text-gray-500 flex items-center gap-2 mb-3'><Info size={15} />{`Place this script before closing </body> tag.`}</div>
-                    <Button className="bg-orange-600 hover:bg-orange-800 cursor-pointer" size="sm" onClick={() => { navigator.clipboard.writeText(`<script src="https://chalpy-ai.vercel.app/widget.js" data-bot-id="${id || 'new'}" async></script>`); showToast('Copied to clipboard!', 'success'); }}>
+                    <Button className="bg-orange-600 hover:bg-orange-800 cursor-pointer" size="sm" onClick={() => { navigator.clipboard.writeText(`<script src="https://chalpy-ai.vercel.app/widget.min.js" data-bot-id="${id || 'new'}" async></script>`); showToast('Copied to clipboard!', 'success'); }}>
                       <Clipboard className="w-4 h-4 mr-2" /> Copy to Clipboard
                     </Button>
                   </div>
