@@ -22,8 +22,8 @@ const Navbar = () => {
 
             <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-8">
 
-                <Link href="#" className="flex items-center gap-2">
-                    <img src="/logo.png" alt="Chalpy AI Logo" width={45} height={45} />
+                <Link href="/" className="flex items-center gap-2">
+                    <Image src="/logo.png" alt="Chalpy AI Logo" width={45} height={45} />
                 </Link>
 
                 <div className="hidden md:flex items-center gap-8">
