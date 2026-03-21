@@ -2,13 +2,17 @@
 
     function init() {
 
-        const script = document.currentScript;
-        const botId = script.getAttribute("data-bot-id");
+        const scripts = document.getElementsByTagName("script");
+        const script = scripts[scripts.length - 1];
+
+        const botId = script?.getAttribute("data-bot-id");
 
         if (!botId) {
             console.error("Missing data-bot-id");
             return;
         }
+
+        console.log("chalpy loaded for bot: ", botId);
 
         const iframe = document.createElement("iframe");
         iframe.src = `https://chalpy-ai.vercel.app/v1/embed/${botId}`;
