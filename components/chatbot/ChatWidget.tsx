@@ -18,7 +18,7 @@ const launcherIconMap: Record<LauncherIcon, React.ReactNode> = {
 
 export function ChatWidget({ chatbotId, workspaceId }: { chatbotId: string, workspaceId: string }) {
 
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const { messages, isMsgLoading, sendMessageEmbed } = useChat(chatbotId, workspaceId);
     const [input, setInput] = useState("");
     const [chatbot, setChatbot] = useState<any>(null);

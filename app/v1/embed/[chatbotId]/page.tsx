@@ -10,7 +10,7 @@ export default function EmbedPage() {
     const { currentWorkspace } = useWorkspace();
 
     return (
-        <div style={{ height: "100vh", width: "100%", backgroundColor: "white" }}>
+        <div className={`embed-widget-container-${chatbotId}`} style={{ height: "100vh", width: "100%" }}>
             <ChatWidget chatbotId={chatbotId as string} workspaceId={currentWorkspace?.id as string ?? ""} />
         </div>
     );
