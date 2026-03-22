@@ -449,3 +449,45 @@ export function isValidColor(color: string | null) {
   return color ? CSS.supports("color", color) : false;
 
 }
+
+export function cleanText(text: string) {
+
+  return text.replace(/\s+/g, " ").replace(/\n{2,}/g, "\n").trim();
+
+}
+
+export function removeNoise(text: string) {
+
+  const lines = text.split("\n");
+
+  const frequency: Record<string, number> = {};
+
+  // count repeated lines
+  lines.forEach(line => {
+    const l = line.trim();
+    if (!l) return;
+    frequency[l] = (frequency[l] || 0) + 1;
+  });
+
+  // remove lines repeated too often (headers/footers)
+  return lines.filter(line => {
+    const l = line.trim();
+    return !l || frequency[l] < 3;
+  }).join("\n");
+
+}
+
+export function safeDecode(text: string) {
+  try {
+    return decodeURIComponent(text);
+  } catch {
+    return text; // fallback to raw
+  }
+}
+
+export function cleanPdfText(text: string) {
+  return text
+    .replace(/[^\x00-\x7F]+/g, " ") // remove weird unicode
+    .replace(/\s+/g, " ")
+    .trim();
+}

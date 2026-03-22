@@ -55,7 +55,7 @@ export function ChatInterface({ messages, chatbot, isLoading, selectedIds, onSen
 
                 <AnimatePresence initial={false}>
                     {messages.map((message, index) => (
-                        <motion.div key={message.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2, delay: index * 0.05 }} className={cn('flex gap-3', message.role === 'user' ? 'justify-end items-end' : 'justify-start items-end')}>
+                        <motion.div key={message.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2, delay: index * 0.01 }} className={cn('flex gap-3', message.role === 'user' ? 'justify-end items-end' : 'justify-start items-end')}>
                             {message.role === 'assistant' && (
                                 <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center shrink-0">
                                     <Sparkles className="w-4 h-4 text-orange-500" />

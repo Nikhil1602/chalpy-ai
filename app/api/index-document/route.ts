@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase"
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
+import { cleanText } from "@/lib/constants";
 
 export const runtime = "nodejs"
 
@@ -34,9 +35,18 @@ export async function POST(req: Request) {
 
         const text = await extractText(file);
 
-        const chunks = await chunkText(text as string);
+        const cleaned = cleanText(text as string);
+        const chunks = await chunkText(cleaned);
 
-        const vectors = await embeddings.embedDocuments(chunks);
+        // const vectors = await embeddings.embedDocuments(chunks);
+        const batchSize = 50;
+        const vectors: number[][] = [];
+
+        for (let i = 0; i < chunks.length; i += batchSize) {
+            const batch = chunks.slice(i, i + batchSize);
+            const batchVectors = await embeddings.embedDocuments(batch);
+            vectors.push(...batchVectors);
+        }
 
         const rows = chunks.map((chunk, i) => ({
             id: randomUUID(),
